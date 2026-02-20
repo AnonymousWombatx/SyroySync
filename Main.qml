@@ -11,12 +11,15 @@ ApplicationWindow {
     visible: true
     title: qsTr("SyroySync")
 
-    Row {
-        anchors.fill: parent
+    FontLoader {
+        id: stdF
+        source: Qt.resolvedUrl("resources/font/Quicksand.ttf")
+    }
 
-        StackView {
-            id: stackView
-            anchors.fill: parent
-        }
+    StackView {
+        id: stackView
+        anchors.fill: parent
+        initialItem: "intro.qml"
     }
 }
+
