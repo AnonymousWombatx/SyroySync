@@ -95,6 +95,10 @@ Item {
 
                 padding: 40
 
+                onClicked: {
+                    intro_panel.StackView.view.push("LoadPage.qml")
+                }
+
             }
 
             Text {

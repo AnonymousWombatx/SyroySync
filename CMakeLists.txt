@@ -17,9 +17,12 @@ qt_add_qml_module(appSyroySync
     QML_FILES
         Main.qml
         RESOURCES resources/images/intro_background.jpg
-        QML_FILES intro.qml
+        QML_FILES IntroPage.qml
         RESOURCES resources/images/intro_background.jpg resources/images/SyroySync.png
         RESOURCES resources/font/Quicksand.ttf
+        QML_FILES LoadPage.qml
+        SOURCES updater.h updater.cpp
+        RESOURCES resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/SyroySync.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
