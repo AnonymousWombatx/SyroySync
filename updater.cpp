@@ -8,12 +8,11 @@
 #include <QVersionNumber>
 
 //constructor
-Updater::Updater(QObject *parent)
-    : QObject{parent}
+Updater::Updater(QObject *parent, QNetworkAccessManager* networkManager)
+    : QObject(parent), m_networkManager(networkManager)
 {
     //Connect Qt signal finished to slot onReplyFinished
-    connect(&m_networkManager, &QNetworkAccessManager::finished, this, &Updater::onReplyFinished);
-
+    connect(m_networkManager, &QNetworkAccessManager::finished, this, &Updater::onReplyFinished);
 }
 
 //checks for updates asynchronous

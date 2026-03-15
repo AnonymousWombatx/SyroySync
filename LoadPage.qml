@@ -100,7 +100,7 @@ Item {
                 padding: 40
 
                 onClicked: {
-                    load_panel.StackView.view.push("LoadPage.qml")
+                    load_panel.StackView.view.push("inputOverview.qml")
                 }
 
 

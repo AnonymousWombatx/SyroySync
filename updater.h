@@ -14,7 +14,7 @@ class Updater : public QObject
     Q_PROPERTY(bool updateAvailable READ updateAvailable NOTIFY updateAvailableChanged FINAL)
 
 public:
-    explicit Updater(QObject *parent = nullptr);
+    explicit Updater(QObject *parent = nullptr, QNetworkAccessManager* m_networkManager = nullptr);
 
     Q_INVOKABLE void checkForUpdates();
 
@@ -31,7 +31,7 @@ private slots:
     void onReplyFinished(QNetworkReply *reply);
 
 private:
-    QNetworkAccessManager m_networkManager;
+    QNetworkAccessManager* m_networkManager;
     QString m_latestVersion;
     bool m_updateAvailable = false;
 

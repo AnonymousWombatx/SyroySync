@@ -23,6 +23,20 @@ qt_add_qml_module(appSyroySync
         QML_FILES LoadPage.qml
         SOURCES updater.h updater.cpp
         RESOURCES resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/SyroySync.png
+        QML_FILES inputOverview.qml
+        RESOURCES resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/SyroySync.png
+        RESOURCES resources/images/API.png resources/images/browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/SyroySync.png resources/images/website.png
+        QML_FILES APIPage.qml
+        QML_FILES BrowserPage.qml
+        QML_FILES WebsitePage.qml
+        RESOURCES resources/images/API.png resources/images/Browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/SyroySync.png resources/images/Website.png
+        RESOURCES resources/images/API.png resources/images/Browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/SyroySync.png resources/images/Website.png
+        RESOURCES resources/images/API.png resources/images/Browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/SyroySync.png resources/images/Website.png
+        RESOURCES resources/images/male_lion.jpg
+        RESOURCES resources/images/API.png resources/images/Browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/SyroySync.png resources/images/Website.png
+        RESOURCES resources/images/API.png resources/images/Browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/next_arrow.png resources/images/SyroySync.png resources/images/Website.png
+        SOURCES youtubeservice.h youtubeservice.cpp
+        QML_FILES config.json
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -37,7 +51,8 @@ set_target_properties(appSyroySync PROPERTIES
 )
 
 target_link_libraries(appSyroySync
-    PRIVATE Qt6::Quick
+    PRIVATE
+        Qt6::Quick
 )
 
 include(GNUInstallDirs)

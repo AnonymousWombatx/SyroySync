@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
+#include <QNetworkRequest>
+
 #include "updater.h"
 
 int main(int argc, char *argv[])
@@ -16,7 +18,8 @@ int main(int argc, char *argv[])
         []() { QCoreApplication::exit(-1); },
         Qt::QueuedConnection);
 
-    Updater updater;
+    QNetworkAccessManager networkManager;
+    Updater updater(nullptr, &networkManager);
 
     engine.rootContext()->setContextProperty("updater", &updater);
 
