@@ -82,4 +82,4 @@ CMakeLists.txt.user*
 /build*/
 
 # Ignore private API keys
-config.json
+config.local.json
