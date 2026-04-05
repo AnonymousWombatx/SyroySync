@@ -38,6 +38,7 @@ qt_add_qml_module(appSyroySync
         SOURCES youtubeservice.h youtubeservice.cpp
         QML_FILES
         QML_FILES config.local.json
+        SOURCES videomodel.h videomodel.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

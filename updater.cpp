@@ -23,7 +23,7 @@ void Updater::checkForUpdates()
 
     // create and send request
     QNetworkRequest request (url);
-    m_networkManager.get(request);
+    m_networkManager -> get(request);
 
 }
 
