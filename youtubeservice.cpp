@@ -11,7 +11,10 @@
 
 YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkManager)
     : QObject(parent), m_networkManager(networkManager), m_apiKey(loadApiKey())
-{}
+{
+    connect(m_networkManager, &QNetworkAccessManager::finished,
+            this, &YoutubeService::onReplyFinished);
+}
 
 //returns value (structure video) of videos
 const QList<YoutubeService::Video> YoutubeService::videoResults()
@@ -43,22 +46,23 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
 
         for (const QJsonValue &item : items){
 
-            //Store snippet and videoID
-            QJsonObject snippet = item.toObject()["snippet"].toObject();
-            QString videoId = item.toObject()["id"].toString();
-            if (videoId.isEmpty()) continue;
+            QJsonObject obj = item.toObject();
+            QJsonObject idObj = obj["id"].toObject();
+            QJsonObject snippet = obj["snippet"].toObject();
 
             //create video structure and load with data
             Video video;
-            video.videoId = videoId;
+            video.videoId = idObj["videoId"].toString();;
             video.title=snippet["title"].toString();
             video.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
 
-            m_videos[videoId]=video;
-            videoIds.append(videoId);
+            m_videos[video.videoId]=video;
+            videoIds.append(video.videoId);
         }
 
+        requestAdditionalData(videoIds);
         break;
+
     case RequestType::GetAdditionalData:
 
         for (const QJsonValue &item: items){
@@ -75,20 +79,41 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             m_videos[videoId].duration = parseDuration(durationISO);
         }
 
+        emit youtubeUrlFinished();
+        break;
+
     case RequestType::GetVideoById:
         break;
     case RequestType::SearchPlaylists:
+
+        for (const QJsonValue &item:items){
+            QJsonObject obj = item.toObject();
+            QJsonObject idObj = obj["id"].toObject();
+            QJsonObject snippet = obj["snippet"].toObject();
+
+            //Create playlist structure
+            Video playlist;
+            playlist.videoId = idObj["playlistId"].toString();
+
+            playlist.title=snippet["title"].toString();
+            playlist.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
+
+            //Add to List of items
+            m_videos[playlist.videoId] = playlist;
+
+            emit youtubeUrlFinished();
+        }
+
         break;
     case RequestType::GetPlaylistItems:
         break;
     }
 
-    emit youtubeUrlFinished();
 
     reply->deleteLater();
 }
 
-void YoutubeService::searchSnippet(const QString &query)
+void YoutubeService::searchSnippet(const QString &query, SearchFilter filter)
 {
     QUrl url("https://www.googleapis.com/youtube/v3/search");
 
@@ -98,6 +123,17 @@ void YoutubeService::searchSnippet(const QString &query)
     queryParams.addQueryItem("maxResults", "5");
     queryParams.addQueryItem("key", m_apiKey);
 
+    //differ between different output types
+    m_filter = filter;
+    switch (filter) {
+        case SearchFilter::Videos:
+            queryParams.addQueryItem("type", "video");
+            break;
+        case SearchFilter::Playlists:
+            queryParams.addQueryItem("type", "playlist");
+            break;
+    }
+
     url.setQuery(queryParams);
 
     QNetworkRequest request(url);
@@ -105,13 +141,11 @@ void YoutubeService::searchSnippet(const QString &query)
     QNetworkReply* reply=m_networkManager->get(request);
 
     //add property requestType to request to store type of return data for later use
-    reply -> setProperty("requestType", static_cast<int>(RequestType::SearchVideos));
+    if (filter == SearchFilter::Videos)
+        reply->setProperty("requestType", static_cast<int>(RequestType::SearchVideos));
+    else
+        reply->setProperty("requestType", static_cast<int>(RequestType::SearchPlaylists));
     reply -> setProperty("query", query);
-
-    //connect signal finished to slot onReplyFinished
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
-        onReplyFinished(reply);
-    });
 }
 
 void YoutubeService::requestAdditionalData(QStringList &videoIds)
@@ -131,9 +165,6 @@ void YoutubeService::requestAdditionalData(QStringList &videoIds)
 
     reply -> setProperty("requestType", static_cast<int>(RequestType::GetAdditionalData));
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply](){
-        onReplyFinished(reply);
-    });
 }
 
 

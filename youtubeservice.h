@@ -10,6 +10,7 @@
 class YoutubeService : public QObject
 {
     Q_OBJECT
+
 public:
     explicit YoutubeService(QObject *parent = nullptr, QNetworkAccessManager* networkManager = nullptr);
 
@@ -21,6 +22,11 @@ public:
         GetPlaylistItems
     };
 
+    enum class SearchFilter {
+        Videos,
+        Playlists
+    };
+
     struct Video {
         QString videoId;
         QString title;
@@ -29,6 +35,8 @@ public:
         QString duration;
         QString views;
     };
+
+    Q_INVOKABLE void searchSnippet(const QString &query, SearchFilter filter);
 
     const QList<Video> videoResults();
 
@@ -41,7 +49,6 @@ private slots:
 private:
     QNetworkAccessManager* m_networkManager;
 
-    void searchSnippet(const QString& query);
     void requestAdditionalData(QStringList &videoIds);
 
     const QString m_apiKey;
@@ -53,6 +60,8 @@ private:
 
     QString parseDuration(const QString &iso);
     QString formatViews(qint64 views);
+
+    SearchFilter m_filter;
 
 };
 

@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     //enable QML properties from classes
     engine.rootContext()->setContextProperty("updater", &updater);
     engine.rootContext()->setContextProperty("videoModel", &model);
+    engine.rootContext()->setContextProperty("service", &service);
 
     engine.loadFromModule("SyroySync", "Main");
 
