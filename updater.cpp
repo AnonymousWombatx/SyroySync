@@ -10,10 +10,7 @@
 //constructor
 Updater::Updater(QObject *parent, QNetworkAccessManager* networkManager)
     : QObject(parent), m_networkManager(networkManager)
-{
-    //Connect Qt signal finished to slot onReplyFinished
-    connect(m_networkManager, &QNetworkAccessManager::finished, this, &Updater::onReplyFinished);
-}
+{}
 
 //checks for updates asynchronous
 void Updater::checkForUpdates()
@@ -22,8 +19,12 @@ void Updater::checkForUpdates()
     QUrl url("https://raw.githubusercontent.com/AnonymousWombatx/SyroySync/main/version.json");
 
     // create and send request
-    QNetworkRequest request (url);
-    m_networkManager -> get(request);
+    QNetworkRequest request(url);
+    QNetworkReply* reply = m_networkManager->get(request);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+        onReplyFinished(reply);
+    });
 
 }
 

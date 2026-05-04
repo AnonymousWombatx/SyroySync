@@ -7,12 +7,15 @@
 #include <QObject>
 #include <QMap>
 
+class VideoModel;
+
 class YoutubeService : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY (QString selectedId READ selectedId WRITE setSelectedId)
 
 public:
-    explicit YoutubeService(QObject *parent = nullptr, QNetworkAccessManager* networkManager = nullptr);
+    explicit YoutubeService(QObject *parent = nullptr, QNetworkAccessManager* networkManager = nullptr, VideoModel* videoModel = nullptr);
 
     enum class RequestType {
         SearchVideos,
@@ -37,8 +40,12 @@ public:
     };
 
     Q_INVOKABLE void searchSnippet(const QString &query, SearchFilter filter);
+    Q_ENUM(SearchFilter)
 
     const QList<Video> videoResults();
+
+    QString selectedId();
+    void setSelectedId(QString inputId);
 
 signals:
     void youtubeUrlFinished();
@@ -48,6 +55,8 @@ private slots:
 
 private:
     QNetworkAccessManager* m_networkManager;
+
+    VideoModel* m_videoModel;
 
     void requestAdditionalData(QStringList &videoIds);
 
@@ -63,6 +72,7 @@ private:
 
     SearchFilter m_filter;
 
+    QString m_selectedId;
 };
 
 

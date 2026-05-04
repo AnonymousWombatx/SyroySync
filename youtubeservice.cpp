@@ -8,12 +8,14 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QJsonArray>
+#include <QNetworkProxy>
+#include "videomodel.h"
 
-YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkManager)
-    : QObject(parent), m_networkManager(networkManager), m_apiKey(loadApiKey())
+YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkManager, VideoModel* videoModel)
+    : QObject(parent), m_networkManager(networkManager), m_apiKey(loadApiKey()), m_videoModel(videoModel)
 {
-    connect(m_networkManager, &QNetworkAccessManager::finished,
-            this, &YoutubeService::onReplyFinished);
+    if (m_videoModel)
+        m_videoModel->setVideos(m_videos.values());
 }
 
 //returns value (structure video) of videos
@@ -26,17 +28,40 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
 {
     //Check for network errors and delete reply after event loop
     if (reply->error() != QNetworkReply::NoError) {
+
+        qDebug() << "Network error:" << reply->errorString();
+
         reply->deleteLater();
         return;
     }
 
+    qDebug() << "HTTP status:"
+             << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+
+    qDebug() << "Network error:"
+             << reply->error()
+             << reply->errorString();
+
     RequestType type = static_cast<RequestType>(reply -> property("requestType").toInt());
 
     QByteArray response = reply->readAll();
+
+    // Print ALL response headers
+    const auto headers = reply->rawHeaderPairs();
+    for (const auto& h : headers)
+        qDebug() << "Header:" << h.first << "=" << h.second;
+
+    qDebug() << "RAW JSON RESPONSE:" << response;
+
     QJsonDocument doc = QJsonDocument::fromJson(response);
     QJsonObject obj = doc.object();
+
+    if (obj.contains("error")) {
+        qDebug() << "YouTube API ERROR:" << obj["error"].toObject();
+        return;
+    }
+
     QJsonArray items = obj["items"].toArray();
-    m_videos.clear();
 
     //Store all videoIds for further requests
     QStringList videoIds;
@@ -44,7 +69,10 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
     switch(type){
     case RequestType::SearchVideos:
 
+        m_videos.clear();
+
         for (const QJsonValue &item : items){
+
 
             QJsonObject obj = item.toObject();
             QJsonObject idObj = obj["id"].toObject();
@@ -54,11 +82,14 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             Video video;
             video.videoId = idObj["videoId"].toString();;
             video.title=snippet["title"].toString();
+            video.channel=snippet["channelTitle"].toString();
             video.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
 
             m_videos[video.videoId]=video;
             videoIds.append(video.videoId);
         }
+
+        qDebug() << "VideoIds count:" << videoIds.size();
 
         requestAdditionalData(videoIds);
         break;
@@ -79,6 +110,8 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             m_videos[videoId].duration = parseDuration(durationISO);
         }
 
+        m_videoModel->setVideos(m_videos.values());
+        qDebug()<<"Additional Data retrieved and videos set in videoModel";
         emit youtubeUrlFinished();
         break;
 
@@ -102,6 +135,8 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             m_videos[playlist.videoId] = playlist;
 
             emit youtubeUrlFinished();
+
+            qDebug()<<"youtubeUrlFinished Emitted";
         }
 
         break;
@@ -115,6 +150,9 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
 
 void YoutubeService::searchSnippet(const QString &query, SearchFilter filter)
 {
+
+    qDebug()<<"Search Snippet with snippet "<<query<<" with filter "<<filter;
+
     QUrl url("https://www.googleapis.com/youtube/v3/search");
 
     QUrlQuery queryParams;
@@ -135,7 +173,7 @@ void YoutubeService::searchSnippet(const QString &query, SearchFilter filter)
     }
 
     url.setQuery(queryParams);
-
+    qDebug()<<url;
     QNetworkRequest request(url);
 
     QNetworkReply* reply=m_networkManager->get(request);
@@ -146,6 +184,20 @@ void YoutubeService::searchSnippet(const QString &query, SearchFilter filter)
     else
         reply->setProperty("requestType", static_cast<int>(RequestType::SearchPlaylists));
     reply -> setProperty("query", query);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+       onReplyFinished(reply);
+    });
+}
+
+QString YoutubeService::selectedId()
+{
+    return m_selectedId;
+}
+
+void YoutubeService::setSelectedId(QString inputId)
+{
+    m_selectedId=inputId;
 }
 
 void YoutubeService::requestAdditionalData(QStringList &videoIds)
@@ -153,7 +205,7 @@ void YoutubeService::requestAdditionalData(QStringList &videoIds)
     QUrl url("https://www.googleapis.com/youtube/v3/videos");
 
     QUrlQuery queryParams;
-    queryParams.addQueryItem("part", "statistics, contentDetails");
+    queryParams.addQueryItem("part", "statistics,contentDetails");
     //pass all ids of the videos
     queryParams.addQueryItem("id", videoIds.join(","));
     queryParams.addQueryItem("key", m_apiKey);
@@ -165,6 +217,7 @@ void YoutubeService::requestAdditionalData(QStringList &videoIds)
 
     reply -> setProperty("requestType", static_cast<int>(RequestType::GetAdditionalData));
 
+    connect(reply, &QNetworkReply::finished, this, [this, reply]() {onReplyFinished(reply);});
 }
 
 
@@ -175,6 +228,8 @@ QString YoutubeService::loadApiKey()
     if (!QFile::exists(path)) {
         path = QCoreApplication::applicationDirPath() + "/config.json";
     }
+
+    qDebug() << "Loading config from:" << path;
 
     QFile file(path);
 
@@ -193,6 +248,7 @@ QString YoutubeService::loadApiKey()
         return "";
     }
 
+    qDebug()<<"API-Key: "<<apiVal;
     return apiVal;
 }
 

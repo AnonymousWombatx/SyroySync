@@ -5,6 +5,7 @@ Item {
 
     id: website_panel
 
+
     Image {
         source: Qt.resolvedUrl("resources/images/male_lion.jpg")
         fillMode: Image.PreserveAspectCrop

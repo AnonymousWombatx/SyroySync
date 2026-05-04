@@ -39,6 +39,9 @@ qt_add_qml_module(appSyroySync
         QML_FILES
         QML_FILES config.local.json
         SOURCES videomodel.h videomodel.cpp
+        RESOURCES resources/images/API.png resources/images/browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/next_arrow.png resources/images/SyroySync.png resources/images/website.png
+        RESOURCES resources/images/API.png resources/images/browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/next_arrow.png resources/images/SyroySync.png resources/images/website.png
+        RESOURCES resources/images/API.png resources/images/API_background.jpg resources/images/browser.png resources/images/input_overview_background.jpg resources/images/intro_background.jpg resources/images/loading_background.jpg resources/images/male_lion.jpg resources/images/next_arrow.png resources/images/SyroySync.png resources/images/website.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

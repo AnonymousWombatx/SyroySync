@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
 
     //cpp objects
     Updater updater(nullptr, &networkManager);
-    YoutubeService service (nullptr, &networkManager);
     VideoModel model;
+    YoutubeService service (nullptr, &networkManager, &model);
 
     //enable QML properties from classes
     engine.rootContext()->setContextProperty("updater", &updater);
