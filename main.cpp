@@ -4,12 +4,16 @@
 
 #include <QNetworkRequest>
 
-#include "updater.h"
-#include "youtubeservice.h"
-#include "videomodel.h"
+#include "src/updater.h"
+#include "src/youtubeservice.h"
+#include "src/videomodel.h"
+
+#include <QQuickStyle>
 
 int main(int argc, char *argv[])
 {
+
+    QQuickStyle::setStyle("FluentWinUI3");
 
     QGuiApplication app(argc, argv);
 
