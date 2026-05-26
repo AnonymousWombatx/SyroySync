@@ -16,17 +16,17 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
     if(!index.isValid() || index.row()>=m_videos.count())
         return {};
 
-    const YoutubeService::Video &v = m_videos.at(index.row());
+    const Video &v = m_videos.at(index.row());
 
     //connects Role to specific data from YoutubeService
     switch (role) {
-        case VideoIdRole:   return v.videoId;
-        case TitleRole:     return v.title;
-        case ChannelRole:   return v.channel;
-        case ThumbnailRole: return v.thumbnail;
-        case DurationRole:  return v.duration;
-        case ViewsRole:     return v.views;
-        default:            return {};
+    case VideoIdRole:   return v.videoId;
+    case TitleRole:     return v.title;
+    case ChannelRole:   return v.channel;
+    case ThumbnailRole: return v.thumbnail;
+    case DurationRole:  return v.duration;
+    case ViewsRole:     return v.views;
+    default:            return {};
     }
 }
 
@@ -34,13 +34,13 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> VideoModel::roleNames() const
 {
     return {
-        {   VideoIdRole,   "videoID"  },
-        {   TitleRole,     "title"  },
-        {   ChannelRole,   "channel"  },
-        {   ThumbnailRole, "thumbnail"  },
-        {   DurationRole,  "duration"  },
-        {   ViewsRole,     "views"  },
-        };
+            {   VideoIdRole,   "videoID"  },
+            {   TitleRole,     "title"  },
+            {   ChannelRole,   "channel"  },
+            {   ThumbnailRole, "thumbnail"  },
+            {   DurationRole,  "duration"  },
+            {   ViewsRole,     "views"  },
+            };
 }
 
 QVariantMap VideoModel::getById(const QString &id) const
@@ -63,7 +63,7 @@ QVariantMap VideoModel::getById(const QString &id) const
 }
 
 //new data enters model
-void VideoModel::setVideos(const QList<YoutubeService::Video> &videos)
+void VideoModel::setVideos(const QList<Video> &videos)
 {
     //stop reading from model and discard cached state
     beginResetModel();

@@ -5,6 +5,16 @@ Item {
 
     id: website_panel
 
+    property bool inputChanged: false
+    property bool loadingFinished: true
+
+    Connections {
+        target: plugin
+
+        function onDataReady() {
+            loadingFinished = true
+        }
+    }
 
     Image {
         source: Qt.resolvedUrl("resources/images/male_lion.jpg")
@@ -43,6 +53,9 @@ Item {
                spacing: 40
 
                 TextField {
+
+                    id: searchLink
+
                     placeholderText: "Enter link here"
                     Layout.fillWidth: true
 
@@ -55,6 +68,8 @@ Item {
                         border.color: "yellow"
                         border.width: 2
                     }
+
+                    onTextChanged: inputChanged = true
                 }
 
                 Image {
@@ -62,10 +77,29 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     Layout.preferredHeight: 60
                     Layout.preferredWidth: 60
+
+                    visible: inputChanged && loadingFinished
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            inputChanged = false
+                            loadingFinished = false
+                            plugin.getDataFromLink (searchLink.text)
+                        }
+                    }
+
+                }
+
+                BusyIndicator {
+                    running: true
+                    Layout.preferredWidth: 75
+                    Layout.preferredHeight: 75
+                    Layout.alignment: Qt.AlignHCenter
+                    visible: !loadingFinished
                 }
 
             }
-
 
         }
     }

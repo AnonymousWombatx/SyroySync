@@ -2,13 +2,21 @@
 #define VIDEOMODEL_H
 
 #include <QAbstractListModel>
-#include "youtubeservice.h"
 
 class VideoModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
+
+    struct Video {
+        QString videoId;
+        QString title;
+        QString channel;
+        QString thumbnail;
+        QString duration;
+        QString views;
+    };
 
     //Links roles to unique integer IDs
     enum Roles {
@@ -39,11 +47,11 @@ public:
 
 public slots:
     //updates model with new data when YoutubeService emits signal
-    void setVideos(const QList<YoutubeService::Video> &videos);
+    void setVideos(const QList<Video> &videos);
 
 private:
     //variable to store data from youtubeservice class
-    QList<YoutubeService::Video> m_videos;
+    QList<Video> m_videos;
 };
 
 #endif // VIDEOMODEL_H

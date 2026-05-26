@@ -19,7 +19,7 @@ YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkMa
 }
 
 //returns value (structure video) of videos
-const QList<YoutubeService::Video> YoutubeService::videoResults()
+const QList<VideoModel::Video> YoutubeService::videoResults()
 {
     return m_videos.values();
 }
@@ -79,7 +79,7 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             QJsonObject snippet = obj["snippet"].toObject();
 
             //create video structure and load with data
-            Video video;
+            VideoModel::Video video;
             video.videoId = idObj["videoId"].toString();;
             video.title=snippet["title"].toString();
             video.channel=snippet["channelTitle"].toString();
@@ -125,7 +125,7 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             QJsonObject snippet = obj["snippet"].toObject();
 
             //Create playlist structure
-            Video playlist;
+            VideoModel::Video playlist;
             playlist.videoId = idObj["playlistId"].toString();
 
             playlist.title=snippet["title"].toString();

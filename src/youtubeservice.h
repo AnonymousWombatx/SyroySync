@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QMap>
 
-class VideoModel;
+#include "videomodel.h"
 
 class YoutubeService : public QObject
 {
@@ -29,19 +29,10 @@ public:
         Playlists
     };
 
-    struct Video {
-        QString videoId;
-        QString title;
-        QString channel;
-        QString thumbnail;
-        QString duration;
-        QString views;
-    };
-
     Q_INVOKABLE void searchSnippet(const QString &query, SearchFilter filter);
     Q_ENUM(SearchFilter)
 
-    const QList<Video> videoResults();
+    const QList<VideoModel::Video> videoResults();
 
 signals:
     void youtubeUrlFinished();
@@ -61,7 +52,7 @@ private:
     QString loadApiKey();
 
     //map videoId to video structure containing the data
-    QMap<QString, Video> m_videos;
+    QMap<QString, VideoModel::Video> m_videos;
 
     QString parseDuration(const QString &iso);
     QString formatViews(qint64 views);

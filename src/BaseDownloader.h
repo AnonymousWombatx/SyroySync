@@ -6,10 +6,12 @@
 
 class BaseDownloader {
 public:
-    virtual ~BaseDownloader();
+    virtual ~BaseDownloader() = default;
 
+    virtual void getDataFromLink(QString url)=0;
 };
+
+Q_DECLARE_INTERFACE (BaseDownloader, "com.SyroySync.BaseDownloader/2.0");
 
 #endif // BASEDOWNLOADER_H
 
-Q_DECLARE_INTERFACE (BaseDownloader, "com.SyroySync.BaseDownloader/2.0");

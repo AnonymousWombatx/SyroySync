@@ -1,6 +1,6 @@
 #include "downloadservice.h"
 
-downloadservice::downloadservice() {}
+downloadservice::downloadservice(BaseDownloader *baseDl) : m_bdl(baseDl) {}
 
 bool downloadservice::getDataFromLink(QString url)
 {
@@ -8,7 +8,6 @@ bool downloadservice::getDataFromLink(QString url)
         //return service.getDataFromLink(url);
         return true;
     }
-
 }
 
 bool downloadservice::isYoutube(QString url)

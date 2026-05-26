@@ -7,6 +7,7 @@
 #include "src/updater.h"
 #include "src/youtubeservice.h"
 #include "src/videomodel.h"
+#include "src/ytdlpplugin.h"
 
 #include <QQuickStyle>
 
@@ -33,11 +34,13 @@ int main(int argc, char *argv[])
     Updater updater(nullptr, &networkManager);
     VideoModel model;
     YoutubeService service (nullptr, &networkManager, &model);
+    YtdlpPlugin plugin (&model);
 
     //enable QML properties from classes
     engine.rootContext()->setContextProperty("updater", &updater);
     engine.rootContext()->setContextProperty("videoModel", &model);
     engine.rootContext()->setContextProperty("service", &service);
+    engine.rootContext()->setContextProperty("plugin", &plugin);
 
     engine.loadFromModule("SyroySync", "Main");
 
