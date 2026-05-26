@@ -49,6 +49,9 @@ qt_add_qml_module(appSyroySync
         qml/resources/font/Quicksand.ttf
         SOURCES src/BaseDownloader.h
         SOURCES src/ytdlpplugin.h src/ytdlpplugin.cpp
+        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
+        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
+        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
