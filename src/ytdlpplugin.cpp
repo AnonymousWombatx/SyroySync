@@ -62,7 +62,7 @@ void YtdlpPlugin::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
     QJsonObject obj = doc.object();
 
-    qDebug().noquote() << "Process finished\n\n" << QJsonDocument(obj).toJson(QJsonDocument::Indented);
+    qDebug().noquote() << "Process finished";
 
     VideoModel::Video video;
     video.videoId = obj["id"].toString();

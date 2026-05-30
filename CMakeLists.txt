@@ -4,6 +4,8 @@ project(SyroySync VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
+
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
 find_package(Qt6 REQUIRED COMPONENTS QuickControls2)
@@ -12,6 +14,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appSyroySync
     main.cpp
+    ${app_icon_resource_windows}
 )
 
 qt_add_qml_module(appSyroySync

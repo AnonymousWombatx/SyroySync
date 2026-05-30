@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 
 Item {
 
@@ -15,13 +16,103 @@ Item {
         anchors.fill: parent
     }
 
-    Image {
-        source: video.thumbnail
+    RowLayout {
 
-        width: 100
-        height: 178
+        anchors.fill: parent
 
-        fillMode: Image.PreserveAspectFit
+        spacing: 20
+
+        Rectangle {
+
+            color: "orangered"
+            opacity: 0.5
+
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.margins: 10
+            Layout.preferredWidth: (3*parent.width) / 10
+
+            ColumnLayout {
+
+                anchors.centerIn: parent
+
+                ButtonGroup {
+                    buttons: row.children
+                }
+
+                RowLayout {
+                    id: row
+
+                    Button {
+                        text: "Audio"
+                        background: Rectangle {
+                            color: "mediumblue"
+
+                            border{
+                                color: "black"
+                                width: 2
+                            }
+                        }
+
+
+                    }
+                    Button {
+                        text: "Video"
+                        background: Rectangle {
+                            color: "darkgreen"
+
+                            border{
+                                color: "black"
+                                width: 2
+                            }
+                        }
+                    }
+                    Button {
+                        text: "Both"
+                        background: Rectangle {
+                            color: "azure"
+
+                            border{
+                                color: "black"
+                                width: 2
+                            }
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+
+        Rectangle {
+            color: "orangered"
+            opacity: 0.7
+
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.preferredWidth: (4*parent.width) / 10
+
+            Image {
+                source: video.thumbnail
+
+                width: 100
+                height: 178
+
+                fillMode: Image.PreserveAspectFit
+            }
+        }
+
+        Rectangle {
+            color: "orangered"
+            opacity: 0.5
+
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            Layout.margins: 20
+            Layout.preferredWidth: (3*parent.width) / 10
+        }
+
     }
 
 }

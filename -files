@@ -1,0 +1,22 @@
+[33m7d393e5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: restructure project layout and add core download architecture
+[33m0bad7b1[m Add disclaimer and usage guidelines to README
+[33mf806d36[m Fix logo file name in README
+[33m8991a56[m Rename logo file for consistency
+[33m471e554[m Add logo to README for SyroySync
+[33m71af259[m Delete docs/images/txt
+[33md0e4b28[m Add files via upload
+[33mb6348c2[m Create txt
+[33meb8b914[m Added API-Page QML
+[33m14b6dbd[m Updated youtubeservice.cpp to enable playlists Exposed youtubeservice.h to QML
+[33m30b9c86[m Added methods for youtubeservice.cpp to send and get requests from YouTube Added class videomodel.h to expose videoresults from youtubeservice.h to QML
+[33mc71f4ee[m Adjusted file structure to local config.json
+[33mdb4b7cc[m Replace config.json with template
+[33mce64a84[m Added input overview (API and website) as well as c++ class for request to the youtube api
+[33m2597da1[m Ignore config.json for private API keys
+[33mbbe6a34[m Added updater class, which checks for new releases on GitHub Implemented Loading Screen checking for updates
+[33m2f8e2b3[m Added version file for updater
+[33mfbd35dc[m Cleaned up the intro page (intro qml), Changed layout
+[33m3d53d20[m Added first page intro.qml with brief layout; Loaded font in main.qml; Added resources
+[33m2a8689e[m Added Stackview
+[33m0088ee9[m Added the QML and CPP file for the base project
+[33m394dca6[m Initial commit

@@ -7,6 +7,8 @@ Item {
 
     property bool inputChanged: false
     property bool loadingFinished: true
+    property bool itemSelected: true
+    property string selectedId: ""
 
     Connections {
         target: plugin
@@ -14,6 +16,12 @@ Item {
         function onDataReady() {
             loadingFinished = true
         }
+    }
+
+    function selectionHandler() {
+        console.log ("Selected song with ID ", selectedId);
+        //push next page and directly pass variable
+        website_panel.StackView.view.push("SettingsPage.qml", {"selectedId": selectedId})
     }
 
     Image {
@@ -101,7 +109,120 @@ Item {
 
             }
 
+
+            ListView  {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                clip: true
+
+                spacing: 8
+
+                model: videoModel
+
+                delegate: Item {
+
+                    width: ListView.view.width
+                    height: 120
+
+                    Rectangle {
+                        id: outerRec
+                        anchors.fill: parent
+                        anchors.margins: 6
+                        color: "mediumspringgreen"
+                        radius: 8
+
+                        border.color: itemSelected ? "darkorange" : "mediumspringgreen"
+                        border.width: 3
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 6
+                            spacing: 10
+
+
+                            Image {
+                                source: thumbnail
+
+                                Layout.preferredHeight: 100
+                                Layout.preferredWidth: 178
+
+                                fillMode: Image.PreserveAspectFit
+                            }
+                            ColumnLayout {
+                                Text {
+                                    text: title
+                                    color: "mediumblue"
+                                    font {
+                                        family: stdF.name
+                                        pixelSize: 24
+                                        bold: true
+                                    }
+
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+
+                                }
+
+                                Text{
+                                    text: channel
+                                    color: "mediumblue"
+                                    font {
+                                        family: stdF.name
+                                        pixelSize: 16
+                                        bold: false
+                                    }
+
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+
+
+                                Text{
+                                    text: duration + " · " + views
+                                    color: "red"
+                                    font {
+                                        family: stdF.name
+                                        pixelSize: 16
+                                        bold: false
+                                    }
+
+                                    elide: Text.ElideRight
+                                    Layout.fillWidth: true
+                                }
+
+                            }
+                        }
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+
+                            if (itemSelected) {
+                                selectedId = videoID
+                                selectionHandler()
+                                return;
+                            }
+
+                            console.log("Clicked item number:", index)
+                            itemSelected = true
+                            selectedId = videoID
+
+                        }
+                        onDoubleClicked: {
+                            selectionHandler()
+                        }
+
+                    }
+
+                }
+            }
+
+
         }
+
+
     }
 
 }
