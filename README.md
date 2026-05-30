@@ -35,3 +35,16 @@ This application does not initiate, manage, or control any downloading process d
 ### Libraries & Tools
 
 - [FFmpeg](https://ffmpeg.org/) - Audio/video processing and conversion
+
+### Image Credits
+
+| File | Source | Author |
+|---|---|---|
+| API.png | [Flaticon](https://www.flaticon.com/de/kostenloses-icon/api_2164832) | Flaticon |
+| API_background.jpg | [Magnific](https://www.magnific.com/free-vector/modern-abstract-dark-violate-pink-background_159480835.htm) | Magnific |
+| Browser.png | [Flaticon](https://www.flaticon.com/de/kostenloses-icon/web-browser_8576378) | Flaticon |
+| Website.png | [Flaticon](https://www.flaticon.com/free-icon/domain_7710466) | Flaticon |
+| input_overview_background.jpg | [Unsplash](https://unsplash.com/photos/T-LfvX-7IVg) | Unsplash |
+| male_lion.jpg | [PNGTree](https://nl.pngtree.com/freebackground/lion-portrait-on-savanna-mount-kilimanjaro-landscape-background-and-at-sunset-panoramic-version_15780706.html) | PNGTree |
+| loading_background.jpg | [Pixabay](https://pixabay.com/photos/10064513) | Carla Manneh - Rombout |
+| Settings_background.jpg | [Pixabay](https://pixabay.com/photos/lion-cub-feline-animal-1305797/) | Tobi (chillervirus) |
