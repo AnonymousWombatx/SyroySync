@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(SyroySync VERSION 0.1 LANGUAGES CXX)
+project(SyroySync VERSION 2.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -52,9 +52,7 @@ qt_add_qml_module(appSyroySync
         qml/resources/font/Quicksand.ttf
         SOURCES src/BaseDownloader.h
         SOURCES src/ytdlpplugin.h src/ytdlpplugin.cpp
-        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
-        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
-        RESOURCES qml/resources/images/API.png qml/resources/images/API_background.jpg qml/resources/images/Browser.png qml/resources/images/input_overview_background.jpg qml/resources/images/intro_background.jpg qml/resources/images/loading_background.jpg qml/resources/images/male_lion.jpg qml/resources/images/next_arrow.png qml/resources/images/settings_background.jpg qml/resources/images/SyroySync.png qml/resources/images/Website.png
+        qml/resources/data/extensions.json
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -72,6 +70,11 @@ target_link_libraries(appSyroySync
     PRIVATE
         Qt6::Quick
         Qt6::QuickControls2
+)
+
+target_compile_definitions(appSyroySync PRIVATE
+    APP_VERSION="${PROJECT_VERSION}"
+    APP_GITHUB="https://github.com/AnonymousWombatx/SyroySync/releases/latest"
 )
 
 include(GNUInstallDirs)

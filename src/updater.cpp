@@ -59,10 +59,9 @@ void Updater::onReplyFinished(QNetworkReply *reply)
     //extract version from JSON
     QString version = obj["version"].toString();
 
-    m_latestVersion = version;
-
     //emit signals
     if (version != m_latestVersion) {
+        m_latestVersion = version;
         emit latestVersionChanged();
     }
 
