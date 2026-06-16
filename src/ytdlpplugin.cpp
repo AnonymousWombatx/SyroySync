@@ -3,9 +3,10 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <QProcess>
+#include <QDir>
 
 YtdlpPlugin::YtdlpPlugin(VideoModel* videoModel)
-    : m_path(getPath()), m_videoModel(videoModel)
+    : m_path(getPath()), m_videoModel(videoModel), m_ffmpeg(getFfmpeg())
 {
     m_process = new QProcess(this);
 
@@ -16,6 +17,8 @@ YtdlpPlugin::YtdlpPlugin(VideoModel* videoModel)
 
 void YtdlpPlugin::getDataFromLink(QString url)
 {
+    tempUrl = url;
+
     qDebug()<<"Retrieving Data from Link with Yt-Dlp for: "<<url;
     if (m_process->state() != QProcess::NotRunning) {
         emit errorOccured("Process already running");
@@ -31,6 +34,66 @@ void YtdlpPlugin::getDataFromLink(QString url)
 
     m_process->start(m_path, args);
     qDebug()<<"Yt-Dlp Process started";
+}
+
+QString YtdlpPlugin::executablePath() const
+{
+    return m_path;
+}
+
+QStringList YtdlpPlugin::downloadArguments(const DownloadOptions &options) const
+{
+    QStringList args;
+
+    //Progress output: each output in new line and correct format
+    args << "--newline";
+
+    const QString outputTemplate = options.saveLocation + "/" + options.outputName + ".%(ext)s";
+
+    args << "-o" << outputTemplate;
+
+    //Output file
+    if (options.audioOnly) {
+        args <<"-x";
+        args << "--audio-format" << options.extension;
+        args << "--audio-quality" << "0";
+
+        //Specific codec
+        if (!options.codec.isEmpty() && options.codec != "copy") {
+            args << "--postprocessor-args";
+            args << QString("ffmpeg:-c:a %1").arg(options.codec);
+        }
+    }
+    else {
+        args << "-f" << "bv*+ba/b";
+        args << "--merge-output-format" << options.extension;
+
+        //Specific codec
+        if (!options.codec.isEmpty() && options.codec != "copy") {
+            args << "--recode-video" << options.extension;
+
+            args << "--postprocessor-args";
+            args << QString("ffmpeg:-c:v %1 -c:a aac").arg(options.codec);
+        }
+    }
+
+    //thumbnail
+    if (options.addThumbnail) {
+        args << "--write-thumbnail";
+        args << "--embed-thumbnail";
+    }
+
+    //trim video
+    if (options.enableTrim) {
+        args << "--download-sections";
+        args << QString ("*%1-%2").arg(options.trimStart, options.trimEnd);
+    }
+
+    args << "--ffmpeg-location"<<m_ffmpeg;
+
+    args << options.url;
+
+    return args;
 }
 
 void YtdlpPlugin::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -64,8 +127,9 @@ void YtdlpPlugin::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 
     qDebug().noquote() << "Process finished";
 
-    VideoModel::Video video;
+    Video video;
     video.videoId = obj["id"].toString();
+    video.url = tempUrl;
     video.title = obj["title"].toString();
     video.channel = obj["uploader"].toString();
     video.thumbnail = obj["thumbnail"].toString();
@@ -88,13 +152,28 @@ void YtdlpPlugin::onErrorOccurred(QProcess::ProcessError error)
 
 QString YtdlpPlugin::getPath()
 {
-    QString path = QCoreApplication::applicationDirPath() + "/config.local.json";
+    const QStringList paths = {
+        QCoreApplication::applicationDirPath() + "/config.local.json",
+        QDir::currentPath() + "/config.local.json",
+        QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../../config.local.json"),
+        QCoreApplication::applicationDirPath() + "/local.config.json"
+    };
 
-    if (!QFile::exists(path)) {
-        path = QCoreApplication::applicationDirPath() + "/config.json";
+    QString path;
+
+    for (const QString &candidate : paths) {
+        qDebug()<<"Checking config path: "<<candidate;
+
+        if (QFile::exists(candidate)) {
+            path = candidate;
+            break;
+        }
     }
 
-    qDebug() << "Loading config from:" << path;
+    if (path.isEmpty()) {
+        qDebug() << "No config file found. Checked:" << paths;
+        return "";
+    }
 
     QFile file(path);
 
@@ -119,6 +198,62 @@ QString YtdlpPlugin::getPath()
         qDebug()<<"Please initialize Path of the Downloader";
         return "";
     }
+
+    file.close();
+
+    return pathVal;
+}
+
+QString YtdlpPlugin::getFfmpeg()
+{
+    const QStringList paths = {
+        QCoreApplication::applicationDirPath() + "/config.local.json",
+        QDir::currentPath() + "/config.local.json",
+        QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../../config.local.json"),
+        QCoreApplication::applicationDirPath() + "/local.config.json"
+    };
+
+    QString path;
+
+    for (const QString &candidate : paths) {
+        qDebug()<<"Checking config path: "<<candidate;
+
+        if (QFile::exists(candidate)) {
+            path = candidate;
+            break;
+        }
+    }
+
+    if (path.isEmpty()) {
+        qDebug() << "No config file found. Checked:" << paths;
+        return "";
+    }
+
+    QFile file(path);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug()<<"Failed to open config file: "<< path;
+        return "";
+    }
+
+
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
+    if (doc.isNull()) {
+        qWarning() << "JSON parse error:" << err.errorString();
+        return "";
+    }
+
+    QJsonObject obj = doc.object();
+
+    QString pathVal = obj["ffmpeg_path"].toString();
+
+    if (pathVal=="DOWNLOADER_PATH" || pathVal.isEmpty()){
+        qDebug()<<"Please initialize Path of Ffmpeg";
+        return "";
+    }
+
+    file.close();
 
     return pathVal;
 }

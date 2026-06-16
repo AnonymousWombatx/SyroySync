@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include "BaseDownloader.h"
+#include "basedownloader.h"
 #include "videomodel.h"
 
 #include <QProcess>
@@ -31,9 +31,12 @@ class YtdlpPlugin : public QObject, public BaseDownloader
 public:
     YtdlpPlugin(VideoModel* videoModel = nullptr);
 
-    Q_INVOKABLE void getDataFromLink(QString url);
+    Q_INVOKABLE void getDataFromLink(QString url) override;
 
     DownloadState::State state() const { return m_state; }
+
+    QString executablePath() const override;
+    QStringList downloadArguments(const DownloadOptions& options) const override;
 
 signals:
     void dataReady ();
@@ -45,19 +48,24 @@ private slots:
 
 private:
 
-    QProcess *m_process;
+    //Process for searching url
+    QProcess *m_process = nullptr;
 
     QString getPath();
+    QString getFfmpeg();
     QString m_path;
+    QString m_ffmpeg;
 
     DownloadState::State m_state = DownloadState::Idle;
 
     void setState(DownloadState::State state);
 
-    VideoModel* m_videoModel;
+    VideoModel* m_videoModel = nullptr;
 
     QString formatDuration(double seconds);
     QString formatViews(qint64 views);
+
+    QString tempUrl;
 };
 
 

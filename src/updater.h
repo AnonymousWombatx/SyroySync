@@ -17,6 +17,7 @@ public:
     explicit Updater(QObject *parent = nullptr, QNetworkAccessManager* m_networkManager = nullptr);
 
     Q_INVOKABLE void checkForUpdates();
+    Q_INVOKABLE void updateYtDlp(const QString& ytDlpPath);
 
     QString latestVersion() const;
     bool updateAvailable() const;
@@ -26,6 +27,8 @@ signals:
     void updateAvailableChanged();
     void updateCheckFinished();
 
+    void ytDlpUpdateFinished();
+    void ytDlpUpdateFailed(const QString& error );
 
 private slots:
     void onReplyFinished(QNetworkReply *reply);

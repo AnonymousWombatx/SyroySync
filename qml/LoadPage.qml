@@ -10,6 +10,8 @@ Item {
     property bool checkFinished: false
     property string newVersion
 
+    property bool ytUpdateFinished: false
+
     Component.onCompleted: {
         updater.checkForUpdates()
     }
@@ -24,7 +26,13 @@ Item {
         }
     }
 
+    Connections {
+        target: updater
 
+        function onYtDlpUpdateFinished() {
+            ytUpdateFinished = true
+        }
+    }
 
     Image {
         source: Qt.resolvedUrl("resources/images/loading_background.jpg")
@@ -65,7 +73,7 @@ Item {
             }
 
             Text {
-                text: !checkFinished
+                text: ytUpdateFinished
                     ? "Checking for updates ..."
                     : (updateAvailable
                        ?"Update available: Version " + newVersion
@@ -74,9 +82,15 @@ Item {
                 font.family: stdF.name
                 font.pixelSize: 32
                 color: "black"
-
+                visible: !checkFinished
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
+            }
+            Text {
+                text: ytUpdateFinished
+                    ? "Updating Downloader"
+                    : "Finished Updating"
+                visible: !ytUpdateFinished
             }
 
             Button {

@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "BaseDownloader.h"
+#include "basedownloader.h"
 
 class downloadservice : public QObject
 {

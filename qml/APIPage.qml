@@ -9,12 +9,12 @@ Item {
     property bool inputChanged: false
     property bool loadingFinished: true
     property int selectedItem: -1
-    property string selectedId: ""
+    property string selectedUrl: ""
 
     function selectionHandler() {
-        console.log ("Selected song with ID ", selectedId);
+        console.log ("Selected song with URL ", selectedUrl);
         //push next page and directly pass variable
-        api_panel.StackView.view.push("SettingsPage.qml", {"selectedId": selectedId})
+        api_panel.StackView.view.push("SettingsPage.qml", {"selectedUrl": selectedUrl})
     }
 
     Image {
@@ -203,7 +203,7 @@ Item {
 
                         if (selectedItem==index) {
                             selectedItem = index
-                            selectedId = videoID
+                            selectedUrl = url
 
                             selectionHandler()
                             return;
@@ -211,10 +211,11 @@ Item {
 
                         console.log("Clicked item number:", index)
                         selectedItem = index
-                        selectedId = videoID
+                        selectedUrl = url
 
                     }
                     onDoubleClicked: {
+                        selectedUrl = url
                         selectionHandler()
                     }
 

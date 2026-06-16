@@ -37,9 +37,9 @@ Item {
 
             Repeater {
                 model: [
-                    { recColor: "coral", name: "API" },
-                    { recColor: "khaki", name: "Browser" },
-                    { recColor: "aqua", name: "Website" }
+                    { recColor: "coral", name: "API", active: true },
+                    { recColor: "khaki", name: "Browser", active: false },
+                    { recColor: "aqua", name: "Website", active: true }
                 ]
                 delegate: optionBox
             }
@@ -60,10 +60,11 @@ Item {
 
             required property string recColor
             required property string name
+            required property bool active
 
             color: recColor
 
-            opacity: 0.75
+            opacity: active ? 0.8 : 0.4
 
             radius: 10
 
@@ -74,6 +75,7 @@ Item {
             {
 
                  anchors.fill: parent
+
 
                 Image {
                     source: Qt.resolvedUrl(`resources/images/${name}.png`)
@@ -98,6 +100,7 @@ Item {
 
             MouseArea {
                 anchors.fill: parent
+                enabled: active
                 onClicked:
                     input_overview_panel.StackView.view.push(`${name}Page.qml`)
             }

@@ -8,8 +8,10 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QJsonArray>
+#include <QDir>
 #include <QNetworkProxy>
 #include "videomodel.h"
+#include "structures.h"
 
 YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkManager, VideoModel* videoModel)
     : QObject(parent), m_networkManager(networkManager), m_apiKey(loadApiKey()), m_videoModel(videoModel)
@@ -19,7 +21,7 @@ YoutubeService::YoutubeService(QObject *parent, QNetworkAccessManager* networkMa
 }
 
 //returns value (structure video) of videos
-const QList<VideoModel::Video> YoutubeService::videoResults()
+const QList<Video> YoutubeService::videoResults()
 {
     return m_videos.values();
 }
@@ -79,8 +81,10 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             QJsonObject snippet = obj["snippet"].toObject();
 
             //create video structure and load with data
-            VideoModel::Video video;
+            Video video;
             video.videoId = idObj["videoId"].toString();;
+            video.url = "https://www.youtube.com/watch?v=" + video.videoId;
+
             video.title=snippet["title"].toString();
             video.channel=snippet["channelTitle"].toString();
             video.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
@@ -125,7 +129,7 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             QJsonObject snippet = obj["snippet"].toObject();
 
             //Create playlist structure
-            VideoModel::Video playlist;
+            Video playlist;
             playlist.videoId = idObj["playlistId"].toString();
 
             playlist.title=snippet["title"].toString();
@@ -213,13 +217,28 @@ void YoutubeService::requestAdditionalData(QStringList &videoIds)
 
 QString YoutubeService::loadApiKey()
 {
-    QString path = QCoreApplication::applicationDirPath() + "/config.local.json";
+    const QStringList paths = {
+        QCoreApplication::applicationDirPath() + "/config.local.json",
+        QDir::currentPath() + "/config.local.json",
+        QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../../config.local.json"),
+        QCoreApplication::applicationDirPath() + "/local.config.json"
+    };
 
-    if (!QFile::exists(path)) {
-        path = QCoreApplication::applicationDirPath() + "/config.json";
+    QString path;
+
+    for (const QString &candidate : paths) {
+        qDebug()<<"Checking config path: "<<candidate;
+
+        if (QFile::exists(candidate)) {
+            path = candidate;
+            break;
+        }
     }
 
-    qDebug() << "Loading config from:" << path;
+    if (path.isEmpty()) {
+        qDebug() << "No config file found. Checked:" << paths;
+        return "";
+    }
 
     QFile file(path);
 
@@ -238,7 +257,8 @@ QString YoutubeService::loadApiKey()
         return "";
     }
 
-    qDebug()<<"API-Key: "<<apiVal;
+    file.close();
+
     return apiVal;
 }
 

@@ -2,21 +2,13 @@
 #define VIDEOMODEL_H
 
 #include <QAbstractListModel>
+#include "structures.h"
 
 class VideoModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-
-    struct Video {
-        QString videoId;
-        QString title;
-        QString channel;
-        QString thumbnail;
-        QString duration;
-        QString views;
-    };
 
     //Links roles to unique integer IDs
     enum Roles {
@@ -25,7 +17,8 @@ public:
         ChannelRole,
         ThumbnailRole,
         DurationRole,
-        ViewsRole
+        ViewsRole,
+        UrlRole
     };
 
     Q_ENUM(Roles)
@@ -43,7 +36,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
     //function to get a song from id for the settings page
-    Q_INVOKABLE  QVariantMap getById(const QString &id) const;
+    Q_INVOKABLE  QVariantMap getByUrl(const QString &url) const;
 
 public slots:
     //updates model with new data when YoutubeService emits signal

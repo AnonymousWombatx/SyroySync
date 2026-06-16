@@ -7,8 +7,8 @@ Item {
 
     property bool inputChanged: false
     property bool loadingFinished: true
-    property bool itemSelected: true
-    property string selectedId: ""
+    property bool itemSelected: false
+    property string selectedUrl: ""
 
     Connections {
         target: plugin
@@ -19,9 +19,9 @@ Item {
     }
 
     function selectionHandler() {
-        console.log ("Selected song with ID ", selectedId);
+        console.log ("Selected song with ID ", selectedUrl);
         //push next page and directly pass variable
-        website_panel.StackView.view.push("SettingsPage.qml", {"selectedId": selectedId})
+        website_panel.StackView.view.push("SettingsPage.qml", {"selectedUrl": selectedUrl})
     }
 
     Image {
@@ -200,17 +200,18 @@ Item {
                         onClicked: {
 
                             if (itemSelected) {
-                                selectedId = videoID
+                                selectedUrl = url
                                 selectionHandler()
                                 return;
                             }
 
                             console.log("Clicked item number:", index)
                             itemSelected = true
-                            selectedId = videoID
+                            selectedUrl = url
 
                         }
                         onDoubleClicked: {
+                            selectedUrl = url
                             selectionHandler()
                         }
 

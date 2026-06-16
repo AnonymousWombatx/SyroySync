@@ -6,9 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
-
-find_package(Qt6 REQUIRED COMPONENTS QuickControls2)
+find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
 
 qt_standard_project_setup(REQUIRES 6.8)
 
@@ -36,6 +34,8 @@ qt_add_qml_module(appSyroySync
         src/youtubeservice.h   src/youtubeservice.cpp
         src/videomodel.h       src/videomodel.cpp
         src/downloadservice.h  src/downloadservice.cpp
+        src/basedownloader.h
+        src/ytdlpplugin.h src/ytdlpplugin.cpp
 
     RESOURCES
         qml/resources/images/API.png
@@ -50,9 +50,12 @@ qt_add_qml_module(appSyroySync
         qml/resources/images/SyroySync.png
         qml/resources/images/Website.png
         qml/resources/font/Quicksand.ttf
-        SOURCES src/BaseDownloader.h
-        SOURCES src/ytdlpplugin.h src/ytdlpplugin.cpp
         qml/resources/data/extensions.json
+        qml/resources/images/folder.png
+        SOURCES src/downloadjob.h src/downloadjob.cpp
+        SOURCES src/structures.h
+        SOURCES src/downloadmanager.h src/downloadmanager.cpp
+        QML_FILES qml/DownloadDrawer.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

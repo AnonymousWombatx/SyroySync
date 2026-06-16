@@ -1,4 +1,5 @@
 #include "videomodel.h"
+#include "structures.h"
 
 VideoModel::VideoModel(QObject *parent)
     :QAbstractListModel(parent){}
@@ -26,6 +27,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
     case ThumbnailRole: return v.thumbnail;
     case DurationRole:  return v.duration;
     case ViewsRole:     return v.views;
+    case UrlRole:       return v.url;
     default:            return {};
     }
 }
@@ -34,19 +36,20 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
 QHash<int, QByteArray> VideoModel::roleNames() const
 {
     return {
-            {   VideoIdRole,   "videoID"  },
-            {   TitleRole,     "title"  },
-            {   ChannelRole,   "channel"  },
+            {   VideoIdRole,   "videoID"    },
+            {   TitleRole,     "title"      },
+            {   ChannelRole,   "channel"    },
             {   ThumbnailRole, "thumbnail"  },
-            {   DurationRole,  "duration"  },
-            {   ViewsRole,     "views"  },
+            {   DurationRole,  "duration"   },
+            {   ViewsRole,     "views"      },
+            {   UrlRole,        "url"       },
             };
 }
 
-QVariantMap VideoModel::getById(const QString &id) const
+QVariantMap VideoModel::getByUrl(const QString &url) const
 {
     for (const auto &v : m_videos) {
-        if (v.videoId==id) {
+        if (v.url==url) {
             qDebug()<<"Successfully found Id in m_videos";
             return {
                 {"videoId",     v.videoId},
@@ -54,7 +57,8 @@ QVariantMap VideoModel::getById(const QString &id) const
                 {"channel",     v.channel},
                 {"thumbnail",   v.thumbnail},
                 {"duration",    v.duration},
-                {"views",       v.views}
+                {"views",       v.views},
+                {"url",         v.url}
             };
         }
     }

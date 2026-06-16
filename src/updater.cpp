@@ -7,6 +7,8 @@
 
 #include <QVersionNumber>
 
+#include <QProcess>
+
 //constructor
 Updater::Updater(QObject *parent, QNetworkAccessManager* networkManager)
     : QObject(parent), m_networkManager(networkManager)
@@ -26,6 +28,20 @@ void Updater::checkForUpdates()
         onReplyFinished(reply);
     });
 
+}
+
+void Updater::updateYtDlp(const QString &ytDlpPath)
+{
+    auto* process = new QProcess(this);
+
+    connect(process, &QProcess::finished, this, [this,process](int exitCode, QProcess::ExitStatus status) {
+        if(status ==QProcess::NormalExit && exitCode ==0)
+            emit ytDlpUpdateFinished();
+        else
+            process->deleteLater();
+    });
+
+    process->start(ytDlpPath, {"-U"});
 }
 
 //Getter functions for QML-variables
