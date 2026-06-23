@@ -56,6 +56,7 @@ qt_add_qml_module(appSyroySync
         SOURCES src/structures.h
         SOURCES src/downloadmanager.h src/downloadmanager.cpp
         QML_FILES qml/DownloadDrawer.qml
+        QML_FILES qml/Information.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

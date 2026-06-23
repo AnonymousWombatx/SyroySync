@@ -1,25 +1,12 @@
 [
-  { "label": "MP4 (H.264)", "extension": "mp4", "ffmpeg": "mp4", "codec": "libx264", "audioOnly": false },
-  { "label": "MP4 (H.265)", "extension": "mp4", "ffmpeg": "mp4", "codec": "libx265", "audioOnly": false },
-  { "label": "WebM (VP9)", "extension": "webm", "ffmpeg": "webm", "codec": "libvpx-vp9", "audioOnly": false },
+  { "label": "MP4", "extension": "mp4", "ffmpeg": "mp4", "codec": "libx264", "audioOnly": false },
+  { "label": "WebM", "extension": "webm", "ffmpeg": "webm", "codec": "libvpx-vp9", "audioOnly": false },
   { "label": "MKV", "extension": "mkv", "ffmpeg": "matroska", "codec": "copy", "audioOnly": false },
   { "label": "MOV", "extension": "mov", "ffmpeg": "mov", "codec": "copy", "audioOnly": false },
-  { "label": "AVI", "extension": "avi", "ffmpeg": "avi", "codec": "copy", "audioOnly": false },
-  { "label": "FLV", "extension": "flv", "ffmpeg": "flv", "codec": "copy", "audioOnly": false },
-  { "label": "TS", "extension": "ts", "ffmpeg": "mpegts", "codec": "copy", "audioOnly": false },
-  { "label": "MPEG", "extension": "mpg", "ffmpeg": "mpeg", "codec": "mpeg2video", "audioOnly": false },
-  { "label": "3GP", "extension": "3gp", "ffmpeg": "3gp", "codec": "copy", "audioOnly": false },
-  { "label": "OGV", "extension": "ogv", "ffmpeg": "ogv", "codec": "libtheora", "audioOnly": false },
-  { "label": "ASF", "extension": "asf", "ffmpeg": "asf", "codec": "copy", "audioOnly": false },
   { "label": "MP3", "extension": "mp3", "ffmpeg": "mp3", "codec": "libmp3lame", "audioOnly": true },
   { "label": "AAC", "extension": "aac", "ffmpeg": "adts", "codec": "aac", "audioOnly": true },
   { "label": "OPUS", "extension": "opus", "ffmpeg": "opus", "codec": "libopus", "audioOnly": true },
   { "label": "FLAC", "extension": "flac", "ffmpeg": "flac", "codec": "flac", "audioOnly": true },
   { "label": "WAV", "extension": "wav", "ffmpeg": "wav", "codec": "pcm_s16le", "audioOnly": true },
-  { "label": "M4A", "extension": "m4a", "ffmpeg": "mp4", "codec": "aac", "audioOnly": true },
-  { "label": "OGG", "extension": "ogg", "ffmpeg": "ogg", "codec": "libvorbis", "audioOnly": true },
-  { "label": "AIFF", "extension": "aiff", "ffmpeg": "aiff", "codec": "pcm_s16be", "audioOnly": true },
-  { "label": "WMA", "extension": "wma", "ffmpeg": "asf", "codec": "wmav2", "audioOnly": true },
-  { "label": "MP2", "extension": "mp2", "ffmpeg": "mp2", "codec": "mp2", "audioOnly": true },
-  { "label": "AC3", "extension": "ac3", "ffmpeg": "ac3", "codec": "ac3", "audioOnly": true }
+  { "label": "M4A", "extension": "m4a", "ffmpeg": "mp4", "codec": "aac", "audioOnly": true }
 ]

@@ -27,14 +27,16 @@ Item {
         return audioOnly ? f.audioOnly === true : f.audioOnly === false
     })
     property var selectedFormat: filteredFormats[formatDropDown.currentIndex]
-    property string selectedFfmpeg: selectedFormat.ffmpeg
-    property string selectedCodec: selectedFormat.codec
     property string selectedExtension: selectedFormat.extension
 
 
     //Standard Path for the downloads
-    property string downloadDir: StandardPaths.writableLocation(StandardPaths.DownloadLocation)+ "/SyroySync"
+    property string downloadDir: video.playlist
+        ? StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync"
+        : StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync/" + video.title.replace(/[\\/:*?"<>|]/g, "_")
 
+
+    property bool nextAvailable: false
 
     Image {
         source: Qt.resolvedUrl("resources/images/settings_background.jpg")
@@ -164,7 +166,7 @@ Item {
 
                     id: videoName
 
-                    text: video.title + "-" + video.channel
+                    text: "%(title)s - %(uploader)s"
 
                     Layout.fillWidth: true
                     Layout.preferredHeight: root.height * 0.15
@@ -291,9 +293,8 @@ Item {
 
                     onPressed: {
                         manager.addDownload ({
+                            name: video.title + "-"+video.channel,
                             audioOnly: audioOnly,
-                            ffmpeg: selectedFfmpeg,
-                            codec: selectedCodec,
                             extension: selectedExtension,
                             outputName: videoName.text,
                             saveLocation: downloadDir,
@@ -301,8 +302,8 @@ Item {
                             addThumbnail: addThumbnail.checked,
                             replaceVideoWithThumbnail: replaceThumbnail.checked,
                             enableTrim: trimEnabled.checked,
-                            trimStart: startTime.getText,
-                            trimEnd: endTime.getText,
+                            trimStart: startTime.text,
+                            trimEnd: endTime.text,
                             url: video.url
                             }, {
                             title: metaDialog.mTitle,
@@ -311,8 +312,35 @@ Item {
                             genre: metaDialog.mGenre,
                             releaseDate: metaDialog.mReleaseDate,
                             })
+                        nextAvailable = true
                     }
                 }
+
+                Button {
+                    text: "Next"
+                    enabled: nextAvailable
+
+                    Layout.alignment: Qt.AlignHCenter
+
+                    Layout.bottomMargin: 20
+
+                    font {
+                        family: stdF.name
+                        pixelSize: 32
+                    }
+
+                    background: Rectangle {
+                        color: "mediumblue"
+                        radius: 15
+                        border{
+                            color: "yellow"
+                            width: 2
+                        }
+                    }
+
+                    onPressed: intro_panel.StackView.view.push("inputOverview.qml")
+                }
+
             }
         }
 

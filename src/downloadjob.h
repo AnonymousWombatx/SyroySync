@@ -32,7 +32,7 @@ public:
     void resume();
 
     int progress() const;
-    QString outputName() const;
+    QString name() const;
     QString thumbnail() const;
     QString state() const;
 

@@ -4,6 +4,8 @@
 #include <QDateTime>
 #include <windows.h>
 
+#include <QTime>
+
 DownloadJob::DownloadJob(BaseDownloader* downloader, DownloadOptions options, QObject* parent)
     : m_process(new QProcess(this)), m_downloader (downloader), m_options (options), QObject(parent), m_progress(0),
     m_state(States::starting), previousState(States::starting)
@@ -46,9 +48,9 @@ int DownloadJob::progress() const
     return m_progress;
 }
 
-QString DownloadJob::outputName() const
+QString DownloadJob::name() const
 {
-    return m_options.outputName;
+    return m_options.name;
 }
 
 QString DownloadJob::thumbnail() const
@@ -58,7 +60,6 @@ QString DownloadJob::thumbnail() const
 
 QString DownloadJob::state() const
 {
-    qDebug()<<"State: "<<stateString(m_state);
     return stateString(m_state);
 }
 
@@ -69,6 +70,8 @@ void DownloadJob::onReadyReadStandardOutput()
 
     //Reads from the standard output of the process
     const QString output = QString::fromUtf8(m_process->readAllStandardOutput());
+
+    qDebug()<<QTime::currentTime().toString("hh:mm:ss") + ": " +output;
 
     const QStringList lines = output.split('\n', Qt::SkipEmptyParts);
 
@@ -96,8 +99,6 @@ void DownloadJob::setProgress(int progress)
     if (m_progress == progress) return;
 
     m_progress = progress;
-
-    qDebug()<<"Progress: "<<m_progress;
 
     emit progressChanged();
 

@@ -10,6 +10,7 @@ Item {
     property bool loadingFinished: true
     property int selectedItem: -1
     property string selectedUrl: ""
+    property bool lastSelect
 
     function selectionHandler() {
         console.log ("Selected song with URL ", selectedUrl);
@@ -39,6 +40,11 @@ Item {
         anchors.bottomMargin: 60
 
         spacing: 40
+
+        Switch {
+            id: typeSwitch
+            text: checked ? "Playlist" : "Video"
+        }
 
         Text {
             text: "Please enter a search term:"
@@ -96,7 +102,8 @@ Item {
                     onClicked: {
                         inputChanged = false
                         loadingFinished = false
-                        service.searchSnippet (searchTerm.text, service.Videos)
+                        lastSelect = typeSwitch.checked
+                        service.searchSnippet (searchTerm.text, typeSwitch.checked)
                     }
                 }
 
@@ -188,7 +195,7 @@ Item {
                                     pixelSize: 16
                                     bold: false
                                 }
-
+                                visible: !lastSelect
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
                             }

@@ -14,6 +14,7 @@ Item {
 
     Component.onCompleted: {
         updater.checkForUpdates()
+        updater.updateYtDlp
     }
 
     Connections {
@@ -71,9 +72,18 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
                 visible: !checkFinished
             }
-
             Text {
                 text: ytUpdateFinished
+                    ? "Updating Downloader"
+                    : "Finished Updating Downloader"
+                font.family: stdF.name
+                font.pixelSize: 32
+                color: "black"
+                Layout.alignment: Qt.AlignCenter
+                width: parent.width
+            }
+            Text {
+                text: !checkFinished
                     ? "Checking for updates ..."
                     : (updateAvailable
                        ?"Update available: Version " + newVersion
@@ -82,15 +92,8 @@ Item {
                 font.family: stdF.name
                 font.pixelSize: 32
                 color: "black"
-                visible: !checkFinished
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
-            }
-            Text {
-                text: ytUpdateFinished
-                    ? "Updating Downloader"
-                    : "Finished Updating"
-                visible: !ytUpdateFinished
             }
 
             Button {

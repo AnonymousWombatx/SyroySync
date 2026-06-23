@@ -50,9 +50,8 @@ DownloadOptions DownloadManager::optionsFromMap(const QVariantMap &data, const Q
 {
     DownloadOptions options;
 
+    options.name = data.value("name").toString();
     options.audioOnly = data.value("audioOnly").toBool();
-    options.ffmpeg = data.value("ffmpeg").toString();
-    options.codec = data.value("codec").toString();
     options.extension = data.value("extension").toString();
 
     options.outputName = data.value("outputName").toString();
@@ -96,7 +95,7 @@ QVariant DownloadManager::data(const QModelIndex &index, int role) const
     //connects Role to specific data from YoutubeService
     switch (role) {
     case ProgressRole:  return d->progress();
-    case NameRole:      return d->outputName();
+    case NameRole:      return d->name();
     case ThumbnailRole: return d->thumbnail();
     case StateRole:     return d->state();
     default:            return {};

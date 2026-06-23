@@ -17,24 +17,28 @@ ApplicationWindow {
             anchors.fill: parent
             spacing: 20
 
-            Layout.alignment: Qt.AlignVCenter
-
             Button {
                 text: "Downloads"
                 onClicked: downloadDrawer.open()
+                Layout.alignment: Qt.AlignCenter
             }
             Button {
                 text: "← Back"
-                visible: stackView.depth > 1
+                enabled: stackView.depth > 1
                 onClicked: stackView.pop()
+                Layout.alignment: Qt.AlignCenter
             }
             Button {
                 text: "⌂ Home"
                 onClicked: stackView.replace(null, "IntroPage.qml")
+                Layout.alignment: Qt.AlignCenter
+            }
+            Button {
+                text: "Information"
+                onClicked: stackView.push("Information.qml")
+                Layout.alignment: Qt.AlignCenter
             }
         }
-
-
     }
 
     FontLoader {

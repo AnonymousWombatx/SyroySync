@@ -17,7 +17,7 @@ public:
     explicit Updater(QObject *parent = nullptr, QNetworkAccessManager* m_networkManager = nullptr);
 
     Q_INVOKABLE void checkForUpdates();
-    Q_INVOKABLE void updateYtDlp(const QString& ytDlpPath);
+    Q_INVOKABLE void updateYtDlp();
 
     QString latestVersion() const;
     bool updateAvailable() const;

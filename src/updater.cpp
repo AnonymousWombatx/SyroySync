@@ -8,6 +8,8 @@
 #include <QVersionNumber>
 
 #include <QProcess>
+#include <QCoreApplication>
+#include <QDir>
 
 //constructor
 Updater::Updater(QObject *parent, QNetworkAccessManager* networkManager)
@@ -24,13 +26,15 @@ void Updater::checkForUpdates()
     QNetworkRequest request(url);
     QNetworkReply* reply = m_networkManager->get(request);
 
+    qDebug()<<"Request to GitHub send";
+
     connect(reply, &QNetworkReply::finished, this, [this, reply]() {
         onReplyFinished(reply);
     });
 
 }
 
-void Updater::updateYtDlp(const QString &ytDlpPath)
+void Updater::updateYtDlp()
 {
     auto* process = new QProcess(this);
 
@@ -40,7 +44,7 @@ void Updater::updateYtDlp(const QString &ytDlpPath)
         else
             process->deleteLater();
     });
-
+    QString ytDlpPath = QDir(QCoreApplication::applicationDirPath()).filePath("tolls/yt-dlp.exe");
     process->start(ytDlpPath, {"-U"});
 }
 
@@ -58,8 +62,10 @@ bool Updater::updateAvailable() const
 //executes when HTTP request finishes (signal QNetworkAccessManager::finished)
 void Updater::onReplyFinished(QNetworkReply *reply)
 {
+    qDebug()<<"Return from GitHub recieved";
     //Check for network errors and delete reply after event loop
     if (reply->error() != QNetworkReply::NoError) {
+        qDebug()<<"Error from GitHub!";
         reply->deleteLater();
         return;
     }

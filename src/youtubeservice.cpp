@@ -48,12 +48,7 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
 
     QByteArray response = reply->readAll();
 
-    // Print ALL response headers
-    const auto headers = reply->rawHeaderPairs();
-    for (const auto& h : headers)
-        qDebug() << "Header:" << h.first << "=" << h.second;
-
-    qDebug() << "RAW JSON RESPONSE:" << response;
+    //qDebug() << "RAW JSON RESPONSE:" << response;
 
     QJsonDocument doc = QJsonDocument::fromJson(response);
     QJsonObject obj = doc.object();
@@ -88,14 +83,19 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             video.title=snippet["title"].toString();
             video.channel=snippet["channelTitle"].toString();
             video.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
+            video.playlist = false;
 
             m_videos[video.videoId]=video;
             videoIds.append(video.videoId);
         }
 
-        qDebug() << "VideoIds count:" << videoIds.size();
+        if (!videoIds.isEmpty())
+            requestAdditionalData(videoIds);
+        else {
+            m_videoModel->setVideos({});
+            emit youtubeUrlFinished();
+        }
 
-        requestAdditionalData(videoIds);
         break;
 
     case RequestType::GetAdditionalData:
@@ -134,15 +134,14 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
 
             playlist.title=snippet["title"].toString();
             playlist.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
-
+            playlist.playlist = true;
             //Add to List of items
             m_videos[playlist.videoId] = playlist;
-
-            emit youtubeUrlFinished();
-
-            qDebug()<<"youtubeUrlFinished Emitted";
         }
+        m_videoModel->setVideos(m_videos.values());
 
+        emit youtubeUrlFinished();
+        qDebug()<<"Playlist Finished";
         break;
     case RequestType::GetPlaylistItems:
         break;
@@ -152,8 +151,9 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
     reply->deleteLater();
 }
 
-void YoutubeService::searchSnippet(const QString &query, SearchFilter filter)
+void YoutubeService::searchSnippet(const QString &query, bool select)
 {
+    SearchFilter filter = select ? SearchFilter::Playlists : SearchFilter::Videos;
 
     qDebug()<<"Search Snippet with snippet "<<query<<" with filter "<<filter;
 
@@ -220,8 +220,7 @@ QString YoutubeService::loadApiKey()
     const QStringList paths = {
         QCoreApplication::applicationDirPath() + "/config.local.json",
         QDir::currentPath() + "/config.local.json",
-        QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../../config.local.json"),
-        QCoreApplication::applicationDirPath() + "/local.config.json"
+        QDir(QCoreApplication::applicationDirPath()).absoluteFilePath("../../config.local.json")
     };
 
     QString path;

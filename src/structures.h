@@ -13,6 +13,7 @@ struct Video {
     QString thumbnail;
     QString duration;
     QString views;
+    bool playlist;
 };
 
 struct Metadata {
@@ -25,9 +26,8 @@ struct Metadata {
 
 //Structure for the selected options for downloading
 struct DownloadOptions {
+    QString name;
     bool audioOnly;
-    QString ffmpeg;
-    QString codec;
     QString extension;
 
     QString outputName;

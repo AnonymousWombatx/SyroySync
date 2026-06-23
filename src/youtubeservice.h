@@ -30,7 +30,7 @@ public:
         Playlists
     };
 
-    Q_INVOKABLE void searchSnippet(const QString &query, SearchFilter filter);
+    Q_INVOKABLE void searchSnippet(const QString &query, bool select);
     Q_ENUM(SearchFilter)
 
     const QList<Video> videoResults();
