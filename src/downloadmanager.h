@@ -24,6 +24,7 @@ public:
     explicit DownloadManager(BaseDownloader* downloader, QObject* parent = nullptr);
 
     Q_INVOKABLE void addDownload (const QVariantMap& data, const QVariantMap& metadata);
+    Q_INVOKABLE void addPlaylist (const QVariantMap& data);
 
     //implemented functions for QAbstractListModel
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -39,6 +40,8 @@ public:
     Q_INVOKABLE void pauseDownload(int row);
     Q_INVOKABLE void resumeDownload(int row);
 
+    Q_INVOKABLE void clearFinished();
+
 signals:
     void countChanged();
 
@@ -48,7 +51,8 @@ private:
     BaseDownloader* m_downloader = nullptr;
 
     //gets the options from the qml map to the settings struct
-    DownloadOptions optionsFromMap(const QVariantMap& data, const QVariantMap& metadata);
+    DownloadOptions optionsFromMap(const QVariantMap &data, const QVariantMap &metadata);
+    DownloadOptions optionsFromMap(const QVariantMap &data);
 
 };
 

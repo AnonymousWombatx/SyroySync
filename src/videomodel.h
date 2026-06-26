@@ -18,7 +18,8 @@ public:
         ThumbnailRole,
         DurationRole,
         ViewsRole,
-        UrlRole
+        UrlRole,
+        PlaylistRole
     };
 
     Q_ENUM(Roles)

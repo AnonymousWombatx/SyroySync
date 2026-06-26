@@ -131,7 +131,8 @@ void YoutubeService::onReplyFinished(QNetworkReply *reply)
             //Create playlist structure
             Video playlist;
             playlist.videoId = idObj["playlistId"].toString();
-
+            playlist.url = "https://www.youtube.com/playlist?list=" + playlist.videoId;
+            playlist.channel = snippet["channelTitle"].toString();
             playlist.title=snippet["title"].toString();
             playlist.thumbnail=snippet["thumbnails"].toObject()["medium"].toObject()["url"].toString();
             playlist.playlist = true;

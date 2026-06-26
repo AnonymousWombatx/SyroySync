@@ -35,6 +35,7 @@ public:
     QString name() const;
     QString thumbnail() const;
     QString state() const;
+    States getState();
 
 signals:
     void progressChanged();
@@ -47,7 +48,7 @@ private:
 
     States m_state;
     States previousState;
-    States getState();
+
     QString stateString(States state) const;
 
     QProcess* m_process;

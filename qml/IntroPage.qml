@@ -55,7 +55,17 @@ Item {
 
                 Layout.alignment: Qt.AlignCenter
                 width: parent.width
-                //Layout.bottomMargin: 0
+            }
+
+            Text {
+                text: "(Beta)"
+                font.family: stdF.name
+                font.pixelSize: 32
+                font.italic: true
+                color: "black"
+
+                Layout.alignment: Qt.AlignCenter
+                width: parent.width
             }
 
             Text {

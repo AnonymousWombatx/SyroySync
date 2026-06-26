@@ -47,14 +47,9 @@ Item {
         }
     }
 
-
-
-
     Component {
 
         id: optionBox
-
-
 
         Rectangle{
 
@@ -104,10 +99,6 @@ Item {
                 onClicked:
                     input_overview_panel.StackView.view.push(`${name}Page.qml`)
             }
-
-
         }
-
-
     }
 }

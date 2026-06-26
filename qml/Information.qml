@@ -5,16 +5,17 @@ import QtQuick.Controls
 Item {
     id: infoPage
 
-    Rectangle {
+    Image {
+        source: Qt.resolvedUrl("resources/images/info_background.jpg")
+        fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
-        color: "navy"
     }
 
     Rectangle {
         anchors.fill: parent
         anchors.margins: 20
 
-        color: "deepskyblue"
+        color: "navy"
         opacity: 0.5
 
         radius: 20
@@ -41,19 +42,25 @@ Item {
                 Layout.alignment: Qt.AlignHCenter
             }
 
-            Button {
+            Text {
                 text: "Terms of Use Agreement"
 
-                background: Rectangle {
-                    color: "transparent"
-                }
-
                 font.family: stdF.name
-                font.pixelSize: 48
+                font.pixelSize: 32
+                font.underline: true
+
+                color: "dodgerblue"
 
                 Layout.alignment: Qt.AlignHCenter
 
-                onClicked: Qt.openUrlExternally("https://sync.syroy.com/terms")
+
+                MouseArea {
+                    id: hoverArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: Qt.openUrlExternally("https://syroy.com/terms")
+                }
             }
         }
     }

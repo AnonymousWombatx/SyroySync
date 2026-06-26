@@ -18,8 +18,79 @@
 #include <QJsonValue>
 #include <QDirIterator>
 
+#include <QStandardPaths>
+#include <QFile>
+#include <QTextStream>
+#include <QDateTime>
+
+static QFile* g_logFile = nullptr;
+
+void pruneOldLogs(const QString& logDir, int maxAgeDays)
+{
+    const QDateTime cutoff = QDateTime::currentDateTime().addDays(-maxAgeDays);
+    const QFileInfoList entries = QDir(logDir).entryInfoList(
+        {"*.log"}, QDir::Files
+        );
+
+    for (const QFileInfo& info : entries) {
+        if (info.lastModified() < cutoff) {
+            QFile::remove(info.absoluteFilePath());
+            // optional: qInfo() << "Pruned old log:" << info.fileName();
+        }
+    }
+}
+
+void messageHandler(QtMsgType type, const QMessageLogContext& context, const QString& msg)
+{
+    if (!g_logFile || !g_logFile->isOpen())
+        return;
+
+    QTextStream out(g_logFile);
+
+    const QString timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
+
+    QString prefix;
+    switch (type) {
+    case QtDebugMsg:    prefix = "DEBUG";    break;
+    case QtInfoMsg:     prefix = "INFO";     break;
+    case QtWarningMsg:  prefix = "WARNING";  break;
+    case QtCriticalMsg: prefix = "ERROR";    break;
+    case QtFatalMsg:    prefix = "FATAL";    break;
+    }
+
+    // Optionally include file/line in debug builds
+#ifdef QT_DEBUG
+    const QString location = context.file
+                                 ? QStringLiteral(" [%1:%2]").arg(context.file).arg(context.line)
+                                 : QString();
+#else
+    const QString location;
+#endif
+
+    out << timestamp << " [" << prefix << "]" << location << " " << msg << "\n";
+    out.flush();
+
+    // Also mirror to stderr so Qt Creator's output pane still works
+    fprintf(stderr, "%s [%s]%s %s\n",
+            timestamp.toLocal8Bit().constData(),
+            prefix.toLocal8Bit().constData(),
+            location.toLocal8Bit().constData(),
+            msg.toLocal8Bit().constData());
+
+    if (type == QtFatalMsg)
+        abort();
+}
+
 int main(int argc, char *argv[])
 {
+    //logs
+    const QString logDir = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/logs";
+    QDir().mkpath(logDir);
+    pruneOldLogs(logDir, 7);
+
+    g_logFile = new QFile(logDir + "/app_" + QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".log");
+    g_logFile->open(QIODevice::Append | QIODevice::Text);
+    qInstallMessageHandler(messageHandler);
 
     QQuickStyle::setStyle("FluentWinUI3");
 

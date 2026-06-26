@@ -32,8 +32,8 @@ Item {
 
     //Standard Path for the downloads
     property string downloadDir: video.playlist
-        ? StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync"
-        : StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync/" + video.title.replace(/[\\/:*?"<>|]/g, "_")
+        ? StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync/" + video.title.replace(/[\\/:*?"<>|]/g, "_")
+        : StandardPaths.writableLocation(StandardPaths.DownloadLocation) + "/SyroySync"
 
 
     property bool nextAvailable: false
@@ -51,7 +51,7 @@ Item {
 
         Rectangle {
 
-            color: "orangered"
+            color: video.playlist ? "orangered" : "blueviolet"
             opacity: 0.5
 
             Layout.fillHeight: true
@@ -146,7 +146,7 @@ Item {
         }
 
         Rectangle {
-            color: "orangered"
+            color: video.playlist ? "orangered" : "blueviolet"
             opacity: 0.7
 
             Layout.fillHeight: true
@@ -292,26 +292,44 @@ Item {
                     }
 
                     onPressed: {
-                        manager.addDownload ({
-                            name: video.title + "-"+video.channel,
-                            audioOnly: audioOnly,
-                            extension: selectedExtension,
-                            outputName: videoName.text,
-                            saveLocation: downloadDir,
-                            thumbnail: video.thumbnail,
-                            addThumbnail: addThumbnail.checked,
-                            replaceVideoWithThumbnail: replaceThumbnail.checked,
-                            enableTrim: trimEnabled.checked,
-                            trimStart: startTime.text,
-                            trimEnd: endTime.text,
-                            url: video.url
-                            }, {
-                            title: metaDialog.mTitle,
-                            artist: metaDialog.mArtist,
-                            album: metaDialog.mAlbum,
-                            genre: metaDialog.mGenre,
-                            releaseDate: metaDialog.mReleaseDate,
-                            })
+                        if(video.playlist) {
+                            console.log("PLAYLIST")
+                            manager.addPlaylist ({
+                                name: video.title + "-"+video.channel,
+                                audioOnly: audioOnly,
+                                extension: selectedExtension,
+                                outputName: videoName.text,
+                                saveLocation: downloadDir,
+                                thumbnail: video.thumbnail,
+                                addThumbnail: addThumbnail.checked,
+                                replaceVideoWithThumbnail: replaceThumbnail.checked,
+                                enableTrim: false,
+                                url: video.url
+                                })
+                        }
+                        else {
+                            console.log("VIDEO")
+                            manager.addDownload ({
+                                name: video.title + "-"+video.channel,
+                                audioOnly: audioOnly,
+                                extension: selectedExtension,
+                                outputName: videoName.text,
+                                saveLocation: downloadDir,
+                                thumbnail: video.thumbnail,
+                                addThumbnail: addThumbnail.checked,
+                                replaceVideoWithThumbnail: replaceThumbnail.checked,
+                                enableTrim: trimEnabled.checked,
+                                trimStart: startTime.text,
+                                trimEnd: endTime.text,
+                                url: video.url
+                                }, {
+                                title: metaDialog.mTitle,
+                                artist: metaDialog.mArtist,
+                                album: metaDialog.mAlbum,
+                                genre: metaDialog.mGenre,
+                                releaseDate: metaDialog.mReleaseDate,
+                                })
+                        }
                         nextAvailable = true
                     }
                 }
@@ -345,7 +363,7 @@ Item {
         }
 
         Rectangle {
-            color: "orangered"
+            color: video.playlist ? "orangered" : "blueviolet"
             opacity: 0.5
 
             Layout.fillHeight: true
@@ -445,10 +463,20 @@ Item {
 
                 }
 
+                Text {
+                    text: "Only available for single videos"
+
+                    font {
+                        family: stdF.name
+                        pixelSize: 20
+                    }
+
+                    visible: video.playlist
+
+                    color: "white"
+                }
             }
-
         }
-
     }
 
     FolderDialog {

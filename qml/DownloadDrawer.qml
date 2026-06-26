@@ -111,8 +111,11 @@ Drawer {
                         Text {
                             text: name
                             color: "white"
+
                             elide: Text.ElideRight
                             Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignLeft
+
                             font {
                                 family: stdF.name
                                 pixelSize: 24
@@ -188,9 +191,21 @@ Drawer {
             }
         }
 
-        Rectangle {
-            Layout.fillHeight: true
-            color: "transparent"
+        Button {
+            background: Rectangle {
+                color: "white"
+                radius: 12
+            }
+
+            palette.buttonText: "red"
+
+            text: "Clear"
+            font.pixelSize: 18
+            font.family: stdF.name
+
+            onClicked: manager.clearFinished()
+
+            Layout.alignment: Qt.AlignHCenter
         }
 
 

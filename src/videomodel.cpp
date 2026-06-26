@@ -28,6 +28,7 @@ QVariant VideoModel::data(const QModelIndex &index, int role) const
     case DurationRole:  return v.duration;
     case ViewsRole:     return v.views;
     case UrlRole:       return v.url;
+    case PlaylistRole:  return v.playlist;
     default:            return {};
     }
 }
@@ -43,6 +44,7 @@ QHash<int, QByteArray> VideoModel::roleNames() const
             {   DurationRole,  "duration"   },
             {   ViewsRole,     "views"      },
             {   UrlRole,        "url"       },
+            {   PlaylistRole,   "playlist"  },
             };
 }
 
@@ -58,7 +60,8 @@ QVariantMap VideoModel::getByUrl(const QString &url) const
                 {"thumbnail",   v.thumbnail},
                 {"duration",    v.duration},
                 {"views",       v.views},
-                {"url",         v.url}
+                {"url",         v.url},
+                {"playlist",    v.playlist}
             };
         }
     }

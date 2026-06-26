@@ -1,6 +1,7 @@
 #include "downloadmanager.h"
 #include "downloadjob.h"
 #include <QDir>
+#include <QTextDocumentFragment>
 
 DownloadManager::DownloadManager(BaseDownloader* downloader, QObject* parent)
     : QAbstractListModel(parent), m_downloader(downloader)
@@ -46,6 +47,46 @@ void DownloadManager::addDownload(const QVariantMap &data, const QVariantMap &me
     job->start();
 }
 
+void DownloadManager::addPlaylist(const QVariantMap &data)
+{
+    qDebug() << "Retrieving videodata for playlist";
+    DownloadOptions options = optionsFromMap (data);
+
+    auto* process = new QProcess(this);
+
+    QStringList args = {
+        "--flat-playlist",
+        "--dump-json",
+        "--no-color",
+        options.url
+    };
+
+    connect(process, &QProcess::readyReadStandardOutput, this, [this, process, data]() {
+        while (process->canReadLine()){
+            QByteArray line = process->readLine().trimmed();
+            if (line.isEmpty()) continue;
+
+            QJsonObject obj = QJsonDocument::fromJson(line).object();
+
+            QVariantMap videoData = data;
+            qDebug() << "Playlist entry url:" << obj["url"].toString() << "id:" << obj["id"].toString();
+            videoData["url"] = "https://www.youtube.com/watch?v=" + obj["id"].toString();
+            videoData["name"] = QString("%1 - %2").arg(QTextDocumentFragment::fromHtml(obj["title"].toString()).toPlainText(), QTextDocumentFragment::fromHtml(obj["uploader"].toString()).toPlainText());
+
+            QVariantMap metadata;
+            metadata["title"] = QTextDocumentFragment::fromHtml(obj["title"].toString()).toPlainText();
+            metadata["artist"] = QTextDocumentFragment::fromHtml(obj["uploader"].toString()).toPlainText();
+            metadata["album"] = obj["playlist_title"].toString();
+
+            addDownload(videoData, metadata);
+        }
+    });
+
+    connect(process, &QProcess::finished, process, &QProcess::deleteLater);
+
+    process->start(m_downloader->executablePath(), args);
+}
+
 DownloadOptions DownloadManager::optionsFromMap(const QVariantMap &data, const QVariantMap &metadata)
 {
     DownloadOptions options;
@@ -74,6 +115,32 @@ DownloadOptions DownloadManager::optionsFromMap(const QVariantMap &data, const Q
     options.metadata.artist = metadata.value("artist").toString();
     options.metadata.genre = metadata.value("genre").toString();
     options.metadata.releaseDate = metadata.value("releaseDate").toString();
+
+    return options;
+}
+
+DownloadOptions DownloadManager::optionsFromMap(const QVariantMap &data)
+{
+    DownloadOptions options;
+
+    options.name = data.value("name").toString();
+    options.audioOnly = data.value("audioOnly").toBool();
+    options.extension = data.value("extension").toString();
+
+    options.outputName = data.value("outputName").toString();
+
+    options.thumbnail = data.value("thumbnail").toString();
+    options.addThumbnail = data.value("addThumbnail").toBool();
+    options.replaceVideoWithThumbnail =
+        data.value("replaceVideoWithThumbnail").toBool();
+
+    options.saveLocation = QUrl(data.value("saveLocation").toString()).toLocalFile();
+
+    options.enableTrim = data.value("enableTrim").toBool();
+    options.trimStart = data.value("trimStart").toString();
+    options.trimEnd = data.value("trimEnd").toString();
+
+    options.url = data.value("url").toString();
 
     return options;
 }
@@ -124,4 +191,18 @@ void DownloadManager::pauseDownload(int row){
 void DownloadManager::resumeDownload(int row){
     if(row<0||row>=m_jobs.size()) return;
     m_jobs[row]->resume();
+}
+
+void DownloadManager::clearFinished()
+{
+    for (int i = m_jobs.size()-1; i>=0; i--) {
+        if (m_jobs[i]->getState() == DownloadJob::finished) {
+            beginRemoveRows(QModelIndex(), i, i);
+            disconnect(m_jobs[i], nullptr, this, nullptr);
+            m_jobs[i]->deleteLater();
+            m_jobs.removeAt(i);
+            endRemoveRows();
+        }
+        emit countChanged();
+    }
 }

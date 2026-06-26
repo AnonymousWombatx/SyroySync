@@ -26,18 +26,6 @@ void DownloadJob::start()
     QStringList args = m_downloader->downloadArguments(m_options);
     qDebug() << program << "\n" << args;
 
-    //Log file
-    //Create Directory if not available
-    //QString logDir = QCoreApplication::applicationDirPath() + "/logs";
-    //QDir().mkpath(logDir);
-    //Create name from date and videotitle
-    //QString date = QDateTime::currentDateTime().toString("yyy-MM-dd_HH-mm-ss");
-    //QString safeName = m_options.outputName;
-    //safeName.replace(QRegularExpression(R"([\\/:*?"<>|])"), "_");
-    //QString logPath = logDir + "/" + date + "_" + safeName + ".log";
-
-    //m_process->setStandardErrorFile(logPath);
-
     m_process->start(program, args);
     qDebug() << "Downloadjob started";
 }

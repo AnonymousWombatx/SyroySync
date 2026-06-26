@@ -6,6 +6,7 @@
 #include <QDir>
 
 #include <QJsonArray>
+#include <QTextDocumentFragment>
 
 YtdlpPlugin::YtdlpPlugin(VideoModel* videoModel)
     : m_path(QDir(QCoreApplication::applicationDirPath()).filePath("tools/yt-dlp.exe")),
@@ -16,7 +17,6 @@ YtdlpPlugin::YtdlpPlugin(VideoModel* videoModel)
 
     connect(m_process, &QProcess::finished, this, &YtdlpPlugin::onFinished);
     connect (m_process, &QProcess::errorOccurred, this, &YtdlpPlugin::onErrorOccurred);
-
 }
 
 void YtdlpPlugin::getDataFromLink(QString url)
@@ -85,21 +85,17 @@ QStringList YtdlpPlugin::downloadArguments(const DownloadOptions &options) const
         args << QString ("*%1-%2").arg(options.trimStart).arg(options.trimEnd);
     }
 
-    //metadata: check if empty and then assign to placeholder
-    QString metaArgs;
-    if(!options.metadata.title.isEmpty())
-        metaArgs += "-metadata title=\"" + options.metadata.title + "\" ";
-    if(!options.metadata.artist.isEmpty())
-        metaArgs += "-metadata artist=\"" + options.metadata.artist + "\" ";
-    if(!options.metadata.album.isEmpty())
-        metaArgs += "-metadata album=\"" + options.metadata.album + "\" ";
-    if(!options.metadata.genre.isEmpty())
-        metaArgs += "-metadata genre=\"" + options.metadata.genre + "\" ";
-    if(!options.metadata.releaseDate.isEmpty())
-        metaArgs += "-metadata date=\"" + options.metadata.releaseDate + "\" ";
+    //lambda to add Metadata
+    auto addMeta = [&](const QString& key, const QString& value) {
+        if (value.isEmpty()) return;
+        args << "--postprocessor-args" << QString("ffmpeg:-metadata %1=\"%2\"").arg(key, value);
+    };
 
-    if(!metaArgs.isEmpty())
-        args<<"--postprocessor-args"<<QString("ffmpeg:%1").arg(metaArgs);
+    addMeta("title", options.metadata.title);
+    addMeta("artist", options.metadata.artist);
+    addMeta("album", options.metadata.album);
+    addMeta("genre", options.metadata.genre);
+    addMeta("date", options.metadata.releaseDate);
 
     args << "--ffmpeg-location"<<m_ffmpeg;
 
@@ -145,8 +141,8 @@ void YtdlpPlugin::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
     Video v;
     v.videoId   = obj["id"].toString();
     v.url       = tempUrl;
-    v.title     = obj["title"].toString();
-    v.channel   = obj["uploader"].toString();
+    v.title     = QTextDocumentFragment::fromHtml(obj["title"].toString()).toPlainText();
+    v.channel   = QTextDocumentFragment::fromHtml(obj["uploader"].toString()).toPlainText();
     v.thumbnail = obj["thumbnail"].toString();
     v.views     = formatViews(obj["view_count"].toInt());
     v.playlist  = obj.contains("entries");
