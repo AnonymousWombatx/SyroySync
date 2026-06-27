@@ -34,6 +34,11 @@ This application does not initiate, manage, or control any downloading process d
 **Please note:** Copyright and downloading laws vary by country. What may be permitted in one jurisdiction may be illegal in another. It is your sole responsibility to ensure your use of this software complies with the laws of your country and the terms of service of any platform you access. The developers of this software assume no liability for any misuse.
 
 ---
+## Installation
+
+### Google API Key
+
+The project currently doesn't provide an API key to access the YouTube Data API. If you still want to use the implemented search features, please provide your own API key in `config.local.json`. For information on how to create an API key, see: [Google's official guide](https://support.google.com/googleapi/answer/6158862).
 
 ## Third-Party Tools
 
