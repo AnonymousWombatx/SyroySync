@@ -1,14 +1,28 @@
 cmake_minimum_required(VERSION 3.16)
-
 project(SyroySync VERSION 2.0.0 LANGUAGES CXX)
 
+set(CMAKE_INSTALL_BINDIR ".")
+set(CMAKE_INSTALL_LIBDIR ".")
+
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
-
 find_package(Qt6 REQUIRED COMPONENTS Quick QuickControls2)
-
 qt_standard_project_setup(REQUIRES 6.8)
+
+# ── FFmpeg location (required at configure time) ───────────────────────────────
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/tools/ffmpeg.exe")
+    message(FATAL_ERROR "tools/ffmpeg.exe not found. Place ffmpeg.exe in the tools/ directory.")
+endif()
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/tools/yt-dlp.exe")
+    message(FATAL_ERROR "tools/yt-dlp.exe not found. Place yt-dlp.exe in the tools/ directory.")
+endif()
+if(NOT EXISTS "${CMAKE_SOURCE_DIR}/tools/ffprobe.exe")
+    message(FATAL_ERROR "tools/ffprobe.exe not found. Place ffprobe.exe in the tools/ directory.")
+endif()
+
+# ── Executable ────────────────────────────────────────────────────────────────
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/src/app.rc")
 
 qt_add_executable(appSyroySync
     main.cpp
@@ -28,8 +42,8 @@ qt_add_qml_module(appSyroySync
         qml/BrowserPage.qml
         qml/WebsitePage.qml
         qml/SettingsPage.qml
-        QML_FILES qml/DownloadDrawer.qml
-        QML_FILES qml/Information.qml
+        qml/DownloadDrawer.qml
+        qml/Information.qml
 
     SOURCES
         src/updater.h          src/updater.cpp
@@ -38,9 +52,9 @@ qt_add_qml_module(appSyroySync
         src/downloadservice.h  src/downloadservice.cpp
         src/basedownloader.h
         src/ytdlpplugin.h src/ytdlpplugin.cpp
-        SOURCES src/downloadjob.h src/downloadjob.cpp
-        SOURCES src/structures.h
-        SOURCES src/downloadmanager.h src/downloadmanager.cpp
+        src/downloadjob.h src/downloadjob.cpp
+        src/structures.h
+        src/downloadmanager.h src/downloadmanager.cpp
 
     RESOURCES
         qml/resources/images/API.png
@@ -85,6 +99,35 @@ target_compile_definitions(appSyroySync PRIVATE
 include(GNUInstallDirs)
 install(TARGETS appSyroySync
     BUNDLE DESTINATION .
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION .
+    RUNTIME DESTINATION .
 )
+
+# Install tools
+install(FILES
+    "${CMAKE_SOURCE_DIR}/tools/yt-dlp.exe"
+    "${CMAKE_SOURCE_DIR}/tools/ffmpeg.exe"
+    "${CMAKE_SOURCE_DIR}/tools/ffprobe.exe"
+    DESTINATION "tools"
+)
+
+# Deploy Qt dependencies
+qt_generate_deploy_qml_app_script(
+    TARGET appSyroySync
+    OUTPUT_SCRIPT deploy_script
+    NO_UNSUPPORTED_PLATFORM_ERROR
+    NO_TRANSLATIONS
+)
+install(SCRIPT ${deploy_script})
+
+# CPack / WiX installer
+set(CPACK_GENERATOR "WIX")
+set(CPACK_WIX_LICENSE_RTF "${CMAKE_SOURCE_DIR}/licenses.rtf")
+set(CPACK_WIX_VERSION 4)
+set(CPACK_PACKAGE_NAME "SyroySync")
+set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+set(CPACK_PACKAGE_VENDOR "AnonymousWombat")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SyroySync — media downloader")
+set(CPACK_WIX_UPGRADE_GUID "6dec43e9-3583-4cbb-a094-5e0ceaa40237")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "SyroySync")
+include(CPack)
