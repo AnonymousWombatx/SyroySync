@@ -36,30 +36,30 @@ This application does not initiate, manage, or control any downloading process d
 ---
 ## Installation
 
+Download the latest `.msi` installer from the [Releases](https://github.com/AnonymousWombatx/SyroySync/releases/latest) page and follow the installation wizard.
+
 ### Google API Key
 
 The project currently doesn't provide an API key to access the YouTube Data API. If you still want to use the implemented search features, please provide your own API key in `config.local.json`. For information on how to create an API key, see: [Google's official guide](https://support.google.com/googleapi/answer/6158862).
 
+---
+
 ## Third-Party Tools
-
-SyroySync uses [yt-dlp](https://github.com/yt-dlp/yt-dlp) and [FFmpeg](https://ffmpeg.org/) as backend tools for media processing.
-
+SyroySync uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org/), and [FFprobe](https://ffmpeg.org/ffprobe.html) as backend tools for media processing.
 **These tools are included in the release for convenience only.**
-The developers of SyroySync are not affiliated with, endorsed by, or responsible for yt-dlp or FFmpeg in any way. These tools are separate projects with their own licenses and terms of use.
+The developers of SyroySync are not affiliated with, endorsed by, or responsible for yt-dlp, FFmpeg, or FFprobe in any way. These tools are separate projects with their own licenses and terms of use.
 
 ### Bring Your Own Tools
-
 You are not required to use the bundled versions. SyroySync supports pointing to your own installations of yt-dlp and FFmpeg via the settings page. This is the recommended approach if you have specific version requirements or prefer to manage the tools yourself.
 
 You can download them directly from their official sources:
 - **yt-dlp**: https://github.com/yt-dlp/yt-dlp/releases/latest
-- **FFmpeg**: https://ffmpeg.org/download.html
+- **FFmpeg + FFprobe**: https://ffmpeg.org/download.html
 
 ### Licensing
-
 - yt-dlp is licensed under the [Unlicense](https://github.com/yt-dlp/yt-dlp/blob/master/LICENSE)
-- FFmpeg is licensed under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.html) (the bundled build) — see [FFmpeg Legal](https://ffmpeg.org/legal.html) for details
-- SyroySync itself is licensed under [GPLv3](LICENSE) as required by the included FFmpeg build
+- FFmpeg and FFprobe are licensed under [LGPLv2.1+](https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html) (essentials build via [gyan.dev](https://www.gyan.dev/ffmpeg/builds/)) — see [FFmpeg Legal](https://ffmpeg.org/legal.html) for details
+- SyroySync itself is licensed under [GPLv3](LICENSE)
 
 ---
 
